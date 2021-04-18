@@ -266,17 +266,28 @@ function animeTirette(){
      // plante si on sort de l'ecran
      let numero = evenement[7] - 1
      let tirette = tirettes[numero]
-     console.log(mouse.y)
-
+    // console.log(mouse.y)
+     console.log(MoldY - mouse.y)
      //console.log(tirettes[numero])
-     if ( MoldY > mouse.y && tirette.position.x < 8.80){
-          tirette.position.x += 0.07
+     // trouver le max et le min pour replacer curseur
+     if(tirette.position.x < 8.78 && tirette.position.x > 6.08){
+          console.log("upe")
+          tirette.position.x += (MoldY - mouse.y)
+          if (tirette.position.x > 8.78){
+               tirette.position.x = 8.77999
+          }
+          if (tirette.position.x < 6.08){
+               tirette.position.x = 6.081
+          }
      }
+     console.log("position")
      console.log(tirette.position.x)
-     if( MoldY < mouse.y &&  tirette.position.x > 6.1 ){
-          tirette.position.x -= 0.07
+   
+
      }
-}
+     //console.log(tirette.position.x)
+    
+
 
 
 function animeEcrou(){

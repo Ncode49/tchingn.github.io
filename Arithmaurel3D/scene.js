@@ -20,9 +20,12 @@ var evenement = null;
 var raycaster = new THREE.Raycaster();
 var nbanimationsRZ = 80;
 //  numero de la tirette ou ecrou
-var num
+var num;
 // variable pour stocker les evenements
 var animeReturnZero;
+var MoldX;
+var MoldY;
+
 init();
 renderer.domElement.addEventListener( 'mousemove', onDocumentMouseMove, false );
 renderer.domElement.addEventListener( 'mousedown', onDocumentMouseDown, false );
@@ -149,6 +152,7 @@ function animate() {
      requestAnimationFrame( animate );
      //console.log(objectMove[0])
      controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
+     
      renderer.render( scene, camera );
 }
 
@@ -159,33 +163,25 @@ function animate() {
  * permet de faire bouger les elements si le click est enfoncée
  */
 function onDocumentMouseMove(event){
-  
+     event.preventDefault()
      // recupere position de la souris quand on bouge
      mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
   //   console.log(mouse)
-
-     if(down &&  evenement != null && evenement[0] != 'R'){
-          switch(evenement[0]){
-               // l'ecrou bouge
-               case 'E':
-                    console.log(evenement[5])
-                    num = evenement[5] - 1;
-                    console.log(num)
-                    animeEcrou()
-                    break;
-               // la tirette bouge
-               case 'T':
-                    console.log("tirette");
-                    num = evenement[7] -1;
-                    console.log(num)
-                    animeTirette()
-                    break;
-          }
-          console.log("evenement appuye")
+  if(down &&  evenement != null && evenement[0] != 'R'){
+     switch(evenement[0]){
+          // l'ecrou bouge
+          case 'E':
+               animeEcrou()
+               break;
+          // la tirette bouge
+          case 'T':
+               animeTirette()
+               break;
      }
-     // si on a le bouton down et que un objet a ete selectionne, on peut bouger l'objet
-     raycaster.setFromCamera( mouse, camera );
+     console.log("evenement appuye")
+}
+    
 
 
 }
@@ -194,17 +190,25 @@ function onDocumentMouseMove(event){
  * traite l'evenement up dans ce cas redonne le controle a l'utilisateur ou termine evenement lorsque l'on bouge les parties mobiles 
  */
 function onDocumentMouseUp(event){
+     event.preventDefault()
+     evenement = null;
+
      down = 0;
      console.log("up")
      document.body.style.cursor = 'auto' ;
      controls.enabled = true;
-     evenement = null;
 }
 
 
 function onDocumentMouseDown(event){
+     event.preventDefault()
      down = 1;
+  
+     console.log(event)
      console.log("down")
+     // recupere position de la souris quand on bouge
+      MoldX = ( event.clientX / window.innerWidth ) * 2 - 1;
+     MoldY = - ( event.clientY / window.innerHeight ) * 2 + 1;
      raycaster.setFromCamera( mouse, camera );
     // stoppe le controle sur les deplacements pour pouvoir bouger l'objet
    
@@ -215,11 +219,14 @@ function onDocumentMouseDown(event){
      
     // detection
      if ( intersects.length > 0 ) {
+          console.log(intersects[0].object)
+
           controls.enabled = false;
           evenement = intersects[0].object.parent.name;
           switch( evenement[0]){
                case 'R': 
                     console.log("cle de remise a zero")
+                    console.log(intersects[0].object)
                     animeRAZ();
                     break;
           }
@@ -256,10 +263,24 @@ function animeRAZ(){
 }
 
 function animeTirette(){
+     // plante si on sort de l'ecran
+     let numero = evenement[7] - 1
+     let tirette = tirettes[numero]
+     console.log(mouse.y)
 
+     //console.log(tirettes[numero])
+     if ( MoldY > mouse.y && tirette.position.x < 8.80){
+          tirette.position.x += 0.07
+     }
+     console.log(tirette.position.x)
+     if( MoldY < mouse.y &&  tirette.position.x > 6.1 ){
+          tirette.position.x -= 0.07
+     }
 }
 
 
 function animeEcrou(){
-
+     console.log(evenement[5])
+     num = evenement[5] - 1;
+     console.log(num)
 }

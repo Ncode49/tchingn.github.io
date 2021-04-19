@@ -2,34 +2,37 @@ import * as THREE from './lib/three.module.js';
 import { OrbitControls } from './lib/OrbitControls.js';
 import { ColladaLoader } from './lib/ColladaLoader.js';
 
-let camera, controls, scene, renderer;
+var camera, controls, scene, renderer;
 const mouse = new THREE.Vector2();
 
-let ecrouCentre;
-let childrens = [];
+var ecrouCentre;
+var childrens = [];
 // stocke les états
-let aiguilles = [];
-let cadrans = [];
-let ecrouLaitons = [];
-let tirettes = [];
+var aiguilles = [];
+var cadrans = [];
+var ecrouLaitons = [];
+var tirettes = [];
 // stocke les objets mobiles
-let objectMove = [];
+var objectMove = [];
 
 // boleen pour l'etat de la souris qui est soit enfoncée ou non
-let down = 0;
+var down = 0;
 
 
-let evenement = null;
-let raycaster = new THREE.Raycaster();
+var evenement = null;
+var raycaster = new THREE.Raycaster();
 
 // letiable pour stocker les evenements pour RAZ
-let nbanimationsRZ = 80;
-let animeReturnZero;
+var nbanimationsRZ = 80;
+var animeReturnZero;
 
 // variable pour des coordonnées de la souris pour les tirettes et l'écrou
-let MoldX;
-let MoldY;
+var MoldX;
+var MoldY;
 
+// variable pour le changement d'état affiché
+var inputTiret = [0, 0, 0, 0, 0, 0, 0, 0]; // entrée tirettes
+var inputCadr = [0, 0, 0, 0]; // entrée cadrans
 init();
 animate();
 
@@ -64,7 +67,7 @@ function init() {
     controls.maxDistance = 30;
 
     // instantiate a loader 
-    let loader = new ColladaLoader();
+    var loader = new ColladaLoader();
     // instancie l'arithmaurel et l'affiche a l'écran
     loader.load('modeles_3D/arithmaurel.dae',
 
@@ -102,7 +105,7 @@ function init() {
     let light = new THREE.AmbientLight( 0x222222 );
     scene.add( light );
     */
-    let lightAmb = new THREE.AmbientLight(0xffffff)
+    var lightAmb = new THREE.AmbientLight(0xffffff)
     scene.add(lightAmb)
 
     window.addEventListener('resize', onWindowResize, false);

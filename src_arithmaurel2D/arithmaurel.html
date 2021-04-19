@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    	<meta charset="utf-8">
+    	<title>Arithmaurel</title>
+		<meta name="keywords" content="aconit, arithmaurel, simulation, timoleon maurel, jean jayet, voiron, cylindre de leibniz, stepped drum, step reckoner">
+		<meta name="description" content="Simulateur de l'Arithmaurel de Maurel et Jayet de 1850">
+		<link rel="icon" type="jpg/png" href="images/favicon.png" />
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+		<style>
+			body { margin: 0; overflow: hidden; }
+			button:hover:enabled { background-color: DarkGrey; color : White}
+			pan:active { background-color: White }
+		</style>
+  </head>
+
+  <body> 
+    <canvas id="calque1"; style="z-index:1; position:absolute; left:0px; top:20px;"><p>Dessin non autorisé</p></canvas>
+    <canvas id="calque2"; style="z-index:2; position:absolute; left:0px; top:20px;"><br>Votre navigateur </canvas>
+    <canvas id="calque3"; style="z-index:3; position:absolute; left:0px; top:20px;">ne le supporte pas </canvas>
+
+	<script src="arithmaurel-echelle.js"></script>
+	<script src="auxiliaire.js"></script>
+	<script src="notice.js"></script>
+	<button id="RAZflech" onclick="RAZflech(); abort()">Effacer les cadrans</button>
+	<button id="RAZdisk"  onclick="RAZdisk(5);  abort()">Effacer le totalisateur</button>
+	<div id="tirette">&nbsp;0 0 0 0 0 0 0 1&nbsp;</div>
+	<div id="aiguilles">Position des aiguilles</div>
+	<div id="cadran">&nbsp;0 0 0 0&nbsp;</div>
+	<div class="retard"><input id="slide" type="range" min="0" max="100" value="99" list="textRetard" onchange="Delai = 590 -  5 * (this.value)"></div>
+	<datalist id="textRetard"> <option value="0" label="lent"> <option value="100" label="vif"> </datalist>
+	<div id="exemples"><span id="executer">Exemples<br><font size="-1">reboucler</font></span> <input type="checkbox" id="boucle"/>
+		<div id="bAddition" onclick="exempleAddition(1)" >
+			<img id="imbAddition" alt="dessin +" src="images/Plus.png" onmouseover="bigImg(imbAddition)" onmouseout="smallImg(imbAddition)"/>
+		</div>
+		<div id="bSoustraction" onclick="exempleSoustraction(1)" >
+			<img id="imbSoustraction" alt="dessin -" src="images/Moins.png" onmouseover="bigImg(imbSoustraction)" onmouseout="smallImg(imbSoustraction)"/>
+		</div>
+		<div id="bMultiplication" onclick="exempleMultiplication(1)" >
+			<img id="imbMultiplication" alt="dessin x" src="images/Fois.png" onmouseover="bigImg(imbMultiplication)" onmouseout="smallImg(imbMultiplication)"/>
+		</div>
+		<div id="bDivision" onclick="exempleDivision(1)" >
+			<img id="imbDivision" alt="dessin /" src="images/Diviser.png" onmouseover="bigImg(imbDivision)" onmouseout="smallImg(imbDivision)"/>
+		</div>
+		<div id="bSigma" onclick="exempleSigma(1)" >
+			<img id="imbSigma" alt="dessin /" src="images/Sigma.png" onmouseover="bigImg(imbSigma)" onmouseout="smallImg(imbSigma)"/>
+		</div>
+		</div>
+	<div id="textExemples">.</div>	
+	<div id="avertissement"></div>
+ 
+</body>
+</html>

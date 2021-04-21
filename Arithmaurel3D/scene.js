@@ -12,6 +12,8 @@ var aiguilles = [];
 var cadrans = [];
 var ecrouLaitons = [];
 var tirettes = [];
+var val_Tirettes = [];
+var last_Tirette = -1;
 // stocke les objets mobiles
 var objectMove = [];
 
@@ -40,6 +42,10 @@ animate();
 renderer.domElement.addEventListener('mousemove', onDocumentMouseMove, false);
 renderer.domElement.addEventListener('mousedown', onDocumentMouseDown, false);
 renderer.domElement.addEventListener('mouseup', onDocumentMouseUp, false);
+
+const RAZaiguilles = document.getElementById("RAZaiguilles");
+RAZaiguilles.addEventListener("click", razAiguilles);
+
 
 function init() {
 
@@ -135,6 +141,7 @@ function stockeObject() {
         tirettes.push(childrens[i])
         objectMove.push(childrens[i].children[12])
         objectMove.push(childrens[i].children[10])
+        val_Tirettes.push(0)
 
     }
     //console.log(tirettes)
@@ -218,6 +225,42 @@ function onDocumentMouseUp(event) {
     evenement = null;
     down = 0;
     document.body.style.cursor = 'auto';
+    if (last_Tirette > -1) {
+        let tirette = tirettes[last_Tirette]
+        if (tirette.position.x > 6.20 && tirette.position.x < 6.488) {
+            tirette.position.x = 6.479
+            val_Tirettes[last_Tirette] = 0
+        } else if (tirette.position.x >= 6.488 && tirette.position.x < 6.73) {
+            tirette.position.x = 6.72
+            val_Tirettes[last_Tirette] = 1
+        } else if (tirette.position.x >= 6.73 && tirette.position.x < 7.052) {
+            tirette.position.x = 7
+            val_Tirettes[last_Tirette] = 2
+        } else if (tirette.position.x >= 7.052 && tirette.position.x < 7.25) {
+            tirette.position.x = 7.247
+            val_Tirettes[last_Tirette] = 3
+        } else if (tirette.position.x >= 7.25 && tirette.position.x < 7.5) {
+            tirette.position.x = 7.498
+            val_Tirettes[last_Tirette] = 4
+        } else if (tirette.position.x >= 7.5 && tirette.position.x < 7.75) {
+            tirette.position.x = 7.741
+            val_Tirettes[last_Tirette] = 5
+        } else if (tirette.position.x >= 7.75 && tirette.position.x < 8) {
+            tirette.position.x = 7.991
+            val_Tirettes[last_Tirette] = 6
+        } else if (tirette.position.x >= 8 && tirette.position.x < 8.32) {
+            tirette.position.x = 8.296
+            val_Tirettes[last_Tirette] = 7
+        } else if (tirette.position.x >= 8.32 && tirette.position.x < 8.6) {
+            tirette.position.x = 8.537
+            val_Tirettes[last_Tirette] = 8
+        } else if (tirette.position.x >= 8.6 && tirette.position.x < 8.8) {
+            tirette.position.x = 8.799
+            val_Tirettes[last_Tirette] = 9
+        }
+
+        last_Tirette = -1
+    }
     controls.enabled = true;
 }
 
@@ -306,7 +349,7 @@ function animeTirette() {
     let numero = evenement[7] - 1
     let tirette = tirettes[numero]
         // console.log(mouse.y)
-    console.log(MoldY - mouse.y)
+        //console.log(MoldY - mouse.y)
         //console.log(tirettes[numero])
         // trouver le max et le min pour replacer curseur
     if (tirette.position.x < 8.8 && tirette.position.x > 6.08) {
@@ -318,6 +361,9 @@ function animeTirette() {
             tirette.position.x = 6.081
         }
     }
+    console.log(tirette.position.x)
+    last_Tirette = numero
+
 
 }
 
@@ -335,4 +381,14 @@ function animeEcrou() {
     let rotationTranslate = MoldX - mouse.x;
     ecrou.rotation.x += rotationTranslate
     aiguille.rotation.x += rotationTranslate
+}
+
+/** 
+ * Remet à la position initile les aiguilles
+ */
+function razAiguilles() {
+    for (let i = 0; i < aiguilles.length; i++) {
+        ecrouLaitons[i].rotation.x = -3.137;
+        aiguilles[i].rotation.x = 1.585;
+    }
 }

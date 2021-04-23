@@ -27,11 +27,14 @@ var raycaster = new THREE.Raycaster();
 // letiable pour stocker les evenements pour RAZ
 var nbanimationsRZ = 80;
 var animeReturnZero;
-
+var animvueChangeProg;
 // variable pour des coordonnées de la souris pour les tirettes et l'écrou
 var MoldX;
 var MoldY;
 
+// positionnement pour changement de vue
+var dPosX, dPosY, dPosZ, dUpX, dUpY, dUpZ, dRotX, dRotY, dRotZ, pasChange;
+var pasChange;
 // variable pour le changement d'état affiché
 var inputTiret = [0, 0, 0, 0, 0, 0, 0, 0]; // entrée tirettes
 var inputCadr = [0, 0, 0, 0]; // entrée cadrans
@@ -43,6 +46,7 @@ renderer.domElement.addEventListener('mousemove', onDocumentMouseMove, false);
 renderer.domElement.addEventListener('mousedown', onDocumentMouseDown, false);
 renderer.domElement.addEventListener('mouseup', onDocumentMouseUp, false);
 
+// Boutons
 const RAZaiguilles = document.getElementById("RAZaiguilles");
 const RAZtotaliseur = document.getElementById("RAZtotaliseur");
 const face = document.getElementById("face");
@@ -70,13 +74,13 @@ function init() {
     document.body.appendChild(renderer.domElement);
 
     //Camera
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
-    camera.position.set(20, 20, 0);
+    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000);
+    camera.position.set(25, 10, 0);
 
     // Controles
     controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-    controls.dampingFactor = 0.05;
+    //controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+    // controls.dampingFactor = 0.05;
     controls.screenSpacePanning = false;
     controls.minDistance = 5;
     controls.maxDistance = 30;
@@ -181,6 +185,7 @@ function onWindowResize() {
 
 function animate() {
     requestAnimationFrame(animate);
+
     controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
     renderer.render(scene, camera);
 }
@@ -198,6 +203,7 @@ function onDocumentMouseMove(event) {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
+    // si click non enfoncé, change le curseur si selectionne objet mobile
     if (!down) {
         raycaster.setFromCamera(mouse, camera);
         const intersects = raycaster.intersectObjects(objectMove);
@@ -378,7 +384,9 @@ function razTotaliseur() {
 function discretisationTirette() {
     if (last_Tirette > -1) {
         let tirette = tirettes[last_Tirette]
-        if (tirette.position.x > 6.20 && tirette.position.x < 6.488) {
+        if (tirette.position.x < 6.20) {
+            val_Tirettes[last_Tirette] = 0
+        } else if (tirette.position.x > 6.20 && tirette.position.x < 6.488) {
             tirette.position.x = 6.479
             val_Tirettes[last_Tirette] = 0
         } else if (tirette.position.x >= 6.488 && tirette.position.x < 6.73) {
@@ -428,15 +436,45 @@ function convertAngleToVal() {
 
 function affichCadran() {
     document.getElementById('cadran').innerHTML = '&nbsp;';
-    for (var i = 3; i >= 0; i--) {
+    for (let i = 3; i >= 0; i--) {
         document.getElementById('cadran').innerHTML += (Number.isInteger(inputCadr[i]) ? inputCadr[i] : inputCadr[i].toFixed(2)) + '&nbsp;'
     }
 }
 
+function vueChange(posX, posY, posZ, upX, upY, upZ) {
+    // console.log (camera.rotation.x, camera.rotation.y, camera.rotation.z )
+    pasChange = 16;
+    // verifier ici que la distance n'est pas trop importante
+    dPosX = (camera.position.x - posX) / pasChange;
+    dPosY = (camera.position.y - posY) / pasChange;
+    dPosZ = (camera.position.z - posZ) / pasChange;
+    dUpX = (camera.up.x - upX) / pasChange;
+    dUpY = (camera.up.y - upY) / pasChange;
+    dUpZ = (camera.up.z - upZ) / pasChange;
+    vueChangeProg();
+}
+
+function vueChangeProg() {
+    animvueChangeProg = requestAnimationFrame(vueChangeProg);
+    if (pasChange > 0) {
+        camera.position.x -= dPosX;
+        camera.position.y -= dPosY;
+        camera.position.z -= dPosZ; // rotation	
+        camera.up.x -= dUpX;
+        camera.up.y -= dUpY;
+        camera.up.z -= dUpZ; // uniquement pivotement de la camÃ©ra
+        pasChange--;
+    } else {
+        //controls = new THREE.TrackballControls(camera);
+        camera.lookAt(scene.position);
+        window.cancelAnimationFrame(animvueChangeProg);
+    }
+}
+// 3 premier arguments posX, posY, posZ
 function faceVue() {
-    // TODO   
+    vueChange(20, 0, 0, 0, 1, 0)
 }
 
 function faceDessus() {
-    // TODO
+    vueChange(15, 14, 0, 0, 1, 0)
 }

@@ -16,9 +16,12 @@ var val_Tirettes = [];
 var last_Tirette = -1;
 // stocke les objets mobiles
 var objectMove = [];
-
 // boleen pour l'etat de la souris qui est soit enfoncée ou non
 var down = 0;
+
+const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -3.92);
+// variable qui stocke intersection de la souris avec le plan
+var intersection = new THREE.Vector3();
 
 
 var evenement = null;
@@ -35,6 +38,7 @@ var MoldY;
 // positionnement pour changement de vue
 var dPosX, dPosY, dPosZ, dUpX, dUpY, dUpZ, dRotX, dRotY, dRotZ, pasChange;
 var pasChange;
+var intersection = new THREE.Vector3();
 // variable pour le changement d'état affiché
 var inputTiret = [0, 0, 0, 0, 0, 0, 0, 0]; // entrée tirettes
 var inputCadr = [0, 0, 0, 0]; // entrée cadrans
@@ -85,6 +89,12 @@ function init() {
     controls.minDistance = 5;
     controls.maxDistance = 30;
 
+
+    // helper
+    //const axesHelper = new THREE.AxesHelper(10);
+    //scene.add(axesHelper);
+    //const helper = new THREE.PlaneHelper(plane, 20, 0xffff00);
+    //scene.add(helper);
     // instantiate a loader 
     var loader = new ColladaLoader();
     // instancie l'arithmaurel et l'affiche a l'écran
@@ -198,10 +208,11 @@ function animate() {
  */
 
 function onDocumentMouseMove(event) {
-    event.preventDefault()
-        // recupere position de la souris quand on bouge
+    //event.preventDefault()
+    // recupere position de la souris quand on bouge
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
 
     // si click non enfoncé, change le curseur si selectionne objet mobile
     if (!down) {
@@ -218,6 +229,7 @@ function onDocumentMouseMove(event) {
     // si la touche est enfonce et que evenement ne correspond pas a la remise a zero
     // si on veut ajouter d'autres evenement par simple click, ajouter une condition supplémentaire
     if (down && evenement != null && evenement[0] != 'R') {
+
         switch (evenement[0]) {
             // l'ecrou bouge
             case 'E':
@@ -225,6 +237,7 @@ function onDocumentMouseMove(event) {
                 break;
                 // la tirette bouge
             case 'T':
+
                 animeTirette()
                 break;
         }
@@ -236,11 +249,13 @@ function onDocumentMouseMove(event) {
  * traite l'evenement up dans ce cas redonne le controle a l'utilisateur ou termine evenement lorsque l'on bouge les parties mobiles 
  */
 function onDocumentMouseUp(event) {
-    event.preventDefault()
+    discretisationTirette()
+
+    //event.preventDefault()
     evenement = null;
     down = 0;
     document.body.style.cursor = 'auto';
-    discretisationTirette();
+    //discretisationTirette();
 
 
     controls.enabled = true;
@@ -251,7 +266,7 @@ function onDocumentMouseUp(event) {
  * @param {*} event 
  */
 function onDocumentMouseDown(event) {
-    event.preventDefault()
+    //event.preventDefault()
     down = 1;
 
     console.log("down")
@@ -326,26 +341,25 @@ function animeRAZ() {
  */
 function animeTirette() {
     document.body.style.cursor = 'ns-resize';
-
+    // quand on appuis cela calcul 
     // plante si on sort de l'ecran
     let numero = evenement[7] - 1
     let tirette = tirettes[numero]
-        // console.log(mouse.y)
-        //console.log(MoldY - mouse.y)
-        //console.log(tirettes[numero])
-        // trouver le max et le min pour replacer curseur
-    if (tirette.position.x < 8.8 && tirette.position.x > 6.08) {
-        tirette.position.x += (MoldY - mouse.y) / 1.5
-        if (tirette.position.x > 8.8) {
-            tirette.position.x = 8.79999
-        }
-        if (tirette.position.x < 6.08) {
-            tirette.position.x = 6.081
-        }
-    }
-    console.log(tirette.position.x)
-    last_Tirette = numero
 
+    // ne pas oublier cette ligne pour maj les coordonnees de la souris
+    raycaster.setFromCamera(mouse, camera);
+    // calcul intersection souris plan => intersection
+    raycaster.ray.intersectPlane(plane, intersection);
+    tirette.position.x = -1.95 + intersection.x
+
+    // limite du systeme
+    if (tirette.position.x < 6.08) {
+        tirette.position.x = 6.081
+    }
+    if (tirette.position.x > 8.8) {
+        tirette.position.x = 8.79999
+    }
+    last_Tirette = numero
 
 }
 
@@ -385,6 +399,7 @@ function discretisationTirette() {
     if (last_Tirette > -1) {
         let tirette = tirettes[last_Tirette]
         if (tirette.position.x < 6.20) {
+            tirette.position.x = 6.081
             val_Tirettes[last_Tirette] = 0
         } else if (tirette.position.x > 6.20 && tirette.position.x < 6.488) {
             tirette.position.x = 6.479
@@ -477,4 +492,9 @@ function faceVue() {
 
 function faceDessus() {
     vueChange(15, 14, 0, 0, 1, 0)
+}
+
+function Move2() {
+
+    console.log("ok")
 }

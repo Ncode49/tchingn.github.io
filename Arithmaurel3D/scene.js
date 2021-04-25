@@ -45,7 +45,7 @@ var inputCadr = [0, 0, 0, 0]; // entrée cadrans
 
 // variable positionnnement des aiguilles et ecrous
 var oldAngleEcrou, newAngleEcrou;
-var oldAngleAiguille, newAngleAiguille;
+var etat = 0;
 init();
 animate();
 
@@ -113,8 +113,8 @@ function init() {
             // affichage de la scene
             childrens = collada.scene.children;
             scene.add(collada.scene);
-            console.log(collada.scene.children)
-                // recuperations des elements
+            //console.log(collada.scene.children)
+            // recuperations des elements
             stockeObject()
                 //   scene.add(collada.scene.children[2]);
 
@@ -188,7 +188,7 @@ function stockeObject() {
         //console.log(ecrouLaitons)
 
     console.log("object")
-    console.log(objectMove)
+        // console.log(objectMove)
 }
 
 function onWindowResize() {
@@ -297,14 +297,16 @@ function onDocumentMouseDown(event) {
         switch (evenement[0]) {
             case 'R':
                 console.log("cle de remise a zero")
-                console.log(intersects[0].object)
+                    // console.log(intersects[0].object)
                 animeRAZ();
                 break;
             case 'E':
                 let numero = evenement[5] - 1
                 oldAngleEcrou = ecrouLaitons[numero].rotation.x
-                    //  console.log("down: " + oldAngleEcrou * 180 / Math.PI)
-                    // oldAngleAiguille = aiguilles[evenement[5] - 1].rotation.x
+                console.log("angle " + oldAngleEcrou * 180 / Math.PI)
+                etat = 1;
+                //  console.log("down: " + oldAngleEcrou * 180 / Math.PI)
+                // oldAngleAiguille = aiguilles[evenement[5] - 1].rotation.x
                 document.body.style.cursor = 'ew-resize';
                 break;
             case 'T':
@@ -314,7 +316,7 @@ function onDocumentMouseDown(event) {
 
 
 
-        console.log(evenement)
+        //  console.log(evenement)
     }
 
     // on stoppe le control pour la position de l'arithmmaurel
@@ -401,26 +403,77 @@ function animeEcrou() {
     raycaster.setFromCamera(mouse, camera);
     // calcul intersection souris plan => intersection
     raycaster.ray.intersectPlane(planeFace, intersection);
-    console.log(intersection)
-        // coordonnees de l'intersection pour le premier cadran
-        // va de 0 a 360 degre dans le sens antihoraire pas encore bon en réglage
-        // mettre 2 if
-    if (intersection.z <= coord[numero][1] && oldAngleEcrou) {
+    // console.log(intersection)
+    // coordonnees de l'intersection pour le premier cadran
+    // va de 0 a 360 degre dans le sens antihoraire pas encore bon en réglage
+    // mettre 2 if
+    if (intersection.z <= coord[numero][1]) {
         newAngleEcrou = -Math.atan((intersection.y - coord[numero][0]) / (intersection.z - coord[numero][1])) + 3 * Math.PI / 2
 
     } else {
-        newAngleEcrou = Math.PI / 2 - Math.atan((intersection.y - coord[numero][0]) / (intersection.z - coord[numero][1]))
+        newAngleEcrou = -Math.atan((intersection.y - coord[numero][0]) / (intersection.z - coord[numero][1])) + Math.PI / 2
     }
+    if (etat) {
+        if (intersection.y <= coord[numero][0] /*&& (oldAngleEcrou >= 0 && oldAngleEcrou < Math.PI / 4)*/ ) {
+            console.log("souris dessous")
+            console.log(oldAngleEcrou)
+            if ((oldAngleEcrou >= 0 && oldAngleEcrou <= Math.PI / 2) || (oldAngleEcrou <= 2 * Math.PI && oldAngleEcrou >= 3 * Math.PI / 2)) {
+                console.log("angle dessus")
+                ecrou.rotation.x -= Math.PI
+                aiguille.rotation.x -= Math.PI
+                    //console.log(oldAngleEcrou * 180 / Math.PI)
+
+                //aiguille.rotation.x += Math.PI
+            } else {
+
+            }
+
+            //  ecrou.rotation.x += Math.PI
+        }
+        if (intersection.y > coord[numero][0] /*&& (oldAngleEcrou >= 0 && oldAngleEcrou < Math.PI / 4)*/ ) {
+
+            console.log("souris dessus")
+            console.log(oldAngleEcrou * 180 / Math.PI)
+            if (oldAngleEcrou > Math.PI / 2 && oldAngleEcrou < 3 * Math.PI / 2) {
+                ecrou.rotation.x -= Math.PI
+                aiguille.rotation.x -= Math.PI
+
+
+            }
+            // ecrou.rotation.x += Math.PI
+        }
+    }
+    etat = 0;
+    //newAngleEcrou += Math.PI
+
+
+    //console.log(etat)
     //console.log("nouvel angle " + newAngleEcrou * 180 / Math.PI)
     pas = newAngleEcrou - oldAngleEcrou;
     ecrou.rotation.x += newAngleEcrou - oldAngleEcrou
+
+
+    if (ecrou.rotation.x < 0) {
+        console.log("ok")
+        ecrou.rotation.x += Math.PI * 2
+    }
+    if (ecrou.rotation.x > 2 * Math.PI) {
+        ecrou.rotation.x -= Math.PI * 2
+    }
+    console.log(ecrou.rotation.x * 180 / Math.PI)
+        /*
+        if (newAngleEcrou  2 * Math.PI) {
+            newAngleEcrou -= 2 / Math.PI
+        }
+        */
         //console.log("difference d angle " + pas * 180 / Math.PI)
         //console.log("angle aiguille " + aiguille.rotation.x * 180 / Math.PI)
     aiguille.rotation.x += newAngleEcrou - oldAngleEcrou
-    console.log("angle ecrou " + ecrou.rotation.x * 180 / Math.PI);
-    // console.log("difference d angle " + pas * 180 / Math.PI)
-    // console.log("angle aiguille " + aiguille.rotation.x * 180 / Math.PI)
+        // console.log("angle ecrou " + ecrou.rotation.x * 180 / Math.PI);
+        // console.log("difference d angle " + pas * 180 / Math.PI)
+        // console.log("angle aiguille " + aiguille.rotation.x * 180 / Math.PI)
     oldAngleEcrou = newAngleEcrou
+
 }
 
 

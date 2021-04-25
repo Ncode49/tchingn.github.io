@@ -19,7 +19,9 @@ var objectMove = [];
 // boleen pour l'etat de la souris qui est soit enfoncée ou non
 var down = 0;
 
-const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -3.92);
+const planeDessus = new THREE.Plane(new THREE.Vector3(0, 1, 0), -3.92);
+const planeFace = new THREE.Plane(new THREE.Vector3(1, 0, 0), -8);
+
 // variable qui stocke intersection de la souris avec le plan
 var intersection = new THREE.Vector3();
 
@@ -31,9 +33,7 @@ var raycaster = new THREE.Raycaster();
 var nbanimationsRZ = 80;
 var animeReturnZero;
 var animvueChangeProg;
-// variable pour des coordonnées de la souris pour les tirettes et l'écrou
-var MoldX;
-var MoldY;
+
 
 // positionnement pour changement de vue
 var dPosX, dPosY, dPosZ, dUpX, dUpY, dUpZ, dRotX, dRotY, dRotZ, pasChange;
@@ -42,6 +42,10 @@ var intersection = new THREE.Vector3();
 // variable pour le changement d'état affiché
 var inputTiret = [0, 0, 0, 0, 0, 0, 0, 0]; // entrée tirettes
 var inputCadr = [0, 0, 0, 0]; // entrée cadrans
+
+// variable positionnnement des aiguilles et ecrous
+var oldAngleEcrou, newAngleEcrou;
+var oldAngleAiguille, newAngleAiguille;
 init();
 animate();
 
@@ -91,10 +95,11 @@ function init() {
 
 
     // helper
-    //const axesHelper = new THREE.AxesHelper(10);
-    //scene.add(axesHelper);
-    //const helper = new THREE.PlaneHelper(plane, 20, 0xffff00);
-    //scene.add(helper);
+    const axesHelper = new THREE.AxesHelper(10);
+    scene.add(axesHelper);
+    const helper = new THREE.PlaneHelper(planeFace, 20, 0xffff00);
+    // scene.add(helper);
+
     // instantiate a loader 
     var loader = new ColladaLoader();
     // instancie l'arithmaurel et l'affiche a l'écran
@@ -174,6 +179,7 @@ function stockeObject() {
     aiguilles.reverse()
         //console.log(aiguilles)
     for (let i = 20; i <= 23; i++) {
+        childrens[i].rotation.x = 0
         ecrouLaitons.push(childrens[i])
         objectMove.push(childrens[i].children[0])
 
@@ -271,8 +277,8 @@ function onDocumentMouseDown(event) {
 
     console.log("down")
         // recupere position de la souris quand on bouge
-    MoldX = (event.clientX / window.innerWidth) * 2 - 1;
-    MoldY = -(event.clientY / window.innerHeight) * 2 + 1;
+        //  MoldX = (event.clientX / window.innerWidth) * 2 - 1;
+        // MoldY = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
     // stoppe le controle sur les deplacements pour pouvoir bouger l'objet
 
@@ -295,6 +301,10 @@ function onDocumentMouseDown(event) {
                 animeRAZ();
                 break;
             case 'E':
+                let numero = evenement[5] - 1
+                oldAngleEcrou = ecrouLaitons[numero].rotation.x
+                    //  console.log("down: " + oldAngleEcrou * 180 / Math.PI)
+                    // oldAngleAiguille = aiguilles[evenement[5] - 1].rotation.x
                 document.body.style.cursor = 'ew-resize';
                 break;
             case 'T':
@@ -349,7 +359,7 @@ function animeTirette() {
     // ne pas oublier cette ligne pour maj les coordonnees de la souris
     raycaster.setFromCamera(mouse, camera);
     // calcul intersection souris plan => intersection
-    raycaster.ray.intersectPlane(plane, intersection);
+    raycaster.ray.intersectPlane(planeDessus, intersection);
     tirette.position.x = -1.95 + intersection.x
 
     // limite du systeme
@@ -365,28 +375,62 @@ function animeTirette() {
 
 
 
-/**
+// coordonnees centre 
+// 1 :  y= -2, z = -3
+// 2 :  y = -3.23, z = -1.2
+// 3 :  y = - 3.31 z = 1
+// 4 :  y = -2, z = -2.79
+/** 
  *  fonction d'animation de l'écrou si on translate vers la droite => rotation sens horaire
  * si translate souris vers la gauche => rotation sens anti-horaire
  */
+const coord = []
+coord.push([-2, -3])
+coord.push([-3.23, -1.2])
+coord.push([-3.31, 1])
+coord.push([-2, 2.79])
+
 function animeEcrou() {
+
     document.body.style.cursor = 'ew-resize';
     let numero = evenement[5] - 1
     let ecrou = ecrouLaitons[numero]
     let aiguille = aiguilles[numero]
-    let rotationTranslate = MoldX - mouse.x;
-    ecrou.rotation.x += rotationTranslate
-    aiguille.rotation.x += rotationTranslate
-    convertAngleToVal()
+    let pas;
+    // ne pas oublier cette ligne pour maj les coordonnees de la souris
+    raycaster.setFromCamera(mouse, camera);
+    // calcul intersection souris plan => intersection
+    raycaster.ray.intersectPlane(planeFace, intersection);
+    console.log(intersection)
+        // coordonnees de l'intersection pour le premier cadran
+        // va de 0 a 360 degre dans le sens antihoraire pas encore bon en réglage
+        // mettre 2 if
+    if (intersection.z <= coord[numero][1] && oldAngleEcrou) {
+        newAngleEcrou = -Math.atan((intersection.y - coord[numero][0]) / (intersection.z - coord[numero][1])) + 3 * Math.PI / 2
+
+    } else {
+        newAngleEcrou = Math.PI / 2 - Math.atan((intersection.y - coord[numero][0]) / (intersection.z - coord[numero][1]))
+    }
+    //console.log("nouvel angle " + newAngleEcrou * 180 / Math.PI)
+    pas = newAngleEcrou - oldAngleEcrou;
+    ecrou.rotation.x += newAngleEcrou - oldAngleEcrou
+        //console.log("difference d angle " + pas * 180 / Math.PI)
+        //console.log("angle aiguille " + aiguille.rotation.x * 180 / Math.PI)
+    aiguille.rotation.x += newAngleEcrou - oldAngleEcrou
+    console.log("angle ecrou " + ecrou.rotation.x * 180 / Math.PI);
+    // console.log("difference d angle " + pas * 180 / Math.PI)
+    // console.log("angle aiguille " + aiguille.rotation.x * 180 / Math.PI)
+    oldAngleEcrou = newAngleEcrou
 }
+
 
 /** 
  * Remet à la position initile les aiguilles
  */
 function razAiguilles() {
     for (let i = 0; i < aiguilles.length; i++) {
-        ecrouLaitons[i].rotation.x = -3.137;
-        aiguilles[i].rotation.x = 1.585;
+        //ecrouLaitons[i].rotation.x = 0;
+        aiguilles[i].rotation.x = +5 * Math.PI / 2;
     }
 }
 
@@ -444,10 +488,7 @@ function affichTirette() {
     }
 }
 
-// convertit valeur de l'angle et stocke dans inputCadr
-function convertAngleToVal() {
-    //TO DO
-}
+
 
 function affichCadran() {
     document.getElementById('cadran').innerHTML = '&nbsp;';

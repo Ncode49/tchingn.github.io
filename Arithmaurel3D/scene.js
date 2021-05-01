@@ -46,6 +46,7 @@ var inputCadr = [0, 0, 0, 0]; // entrée cadrans
 
 // variable positionnnement des aiguilles et ecrous
 var oldAngleEcrou, newAngleEcrou;
+var oldAngleCentre, newAnglecentre;
 var etat = 0;
 init();
 animate();
@@ -157,6 +158,7 @@ function init() {
 function stockeObject() {
     ecrouCentre = childrens[24];
     ecrouCentre.rotation.x += Math.PI / 5
+    console.log(ecrouCentre.rotation.x*180/Math.PI)
     objectMove.push(ecrouCentre.children[0])
     objectMove.push(ecrouCentre.children[1])
     objectMove.push(ecrouCentre.children[2])
@@ -181,6 +183,7 @@ cadrans[i].position.z += 0.76 * (1 - Math.cos(angleInit))
     //console.log(tirettes)
     for (let i = 8; i <= 11; i++) {
         aiguilles.push(childrens[i])
+       
     }
     aiguilles.reverse()
         //console.log(aiguilles)
@@ -240,9 +243,12 @@ function onDocumentMouseMove(event) {
     //   console.log(mouse)
     // si la touche est enfonce et que evenement ne correspond pas a la remise a zero
     // si on veut ajouter d'autres evenement par simple click, ajouter une condition supplémentaire
-    if (down && evenement != null && evenement[0] != 'R') {
+    if (down && evenement != null) {
 
         switch (evenement[0]) {
+            case 'R':
+                animeCentre()
+                break;
             // l'ecrou bouge
             case 'E':
                 animeEcrou()
@@ -300,17 +306,17 @@ function onDocumentMouseDown(event) {
         controls.enabled = false;
         // nom de l'objet selectionnée
         evenement = intersects[0].object.parent.name;
+        etat = 1;
+
         switch (evenement[0]) {
             case 'R':
                 console.log("cle de remise a zero")
-                    // console.log(intersects[0].object)
-                animeRAZ();
+                oldAngleCentre = ecrouCentre.rotation.x
                 break;
             case 'E':
                 let numero = evenement[5] - 1
                 oldAngleEcrou = ecrouLaitons[numero].rotation.x
  //               console.log("angle " + oldAngleEcrou * 180 / Math.PI)
-                etat = 1;
                 //  console.log("down: " + oldAngleEcrou * 180 / Math.PI)
                 // oldAngleAiguille = aiguilles[evenement[5] - 1].rotation.x
                 document.body.style.cursor = 'ew-resize';
@@ -381,7 +387,43 @@ function animeTirette() {
 
 }
 
+var ecrouCentrecoord = []
+ecrouCentrecoord.push(0.18312431445661992)
+ecrouCentrecoord.push(-0.18312431445662275)
+function animeCentre(){
+    let pas;
+    raycaster.setFromCamera(mouse, camera);
+    // calcul intersection souris plan => intersection
+    raycaster.ray.intersectPlane(planeFace, intersection);
+    console.log("zintersection" + intersection.z)
+    console.log("yintersection" + intersection.y)
+    console.log(intersection.y)
+    if(intersection.y > ecrouCentrecoord[0])
+        newAnglecentre = +Math.atan((intersection.z - ecrouCentrecoord[1]) / (intersection.y - ecrouCentrecoord[0])) -Math.PI/2
 
+    //newAngleEcrou += Math.PI
+    
+
+    //console.log(etat)
+    //console.log("nouvel angle " + newAngleEcrou * 180 / Math.PI)
+    
+    pas = newAnglecentre - oldAngleCentre;
+    
+    // l'angle de la premiere frame est fausse, on l'enleve
+    if(etat == 1){
+        pas = 0;
+        etat = 0
+    }
+    ecrouCentre.rotation.x += pas
+    console.log("valeur ecrou" + ecrouCentre.rotation.x*180/Math.PI)
+    oldAngleCentre = newAnglecentre
+    if(ecrouCentre.rotation.x*180/Math.PI > 216){
+        ecrouCentre.rotation.x = 215.999999999*Math.PI/180
+    }
+    if(ecrouCentre.rotation.x*180/Math.PI < 138){
+        ecrouCentre.rotation.x = 138.0001*Math.PI/180
+    }
+}
 
 // coordonnees centre
 // 1 :  y= -2, z = -3
@@ -418,19 +460,25 @@ function animeEcrou() {
     } else {
         newAngleEcrou = -Math.atan((intersection.y - coord[numero][0]) / (intersection.z - coord[numero][1])) + Math.PI / 2
     }
-     etat = 0;
     //newAngleEcrou += Math.PI
-
 
     //console.log(etat)
     //console.log("nouvel angle " + newAngleEcrou * 180 / Math.PI)
     pas = newAngleEcrou - oldAngleEcrou;
+    if(etat ==1){
+        pas = 0
+        etat = 0;
+    }
+
     ecrou.rotation.x += pas ;
+    
 //console.log ("pas = " + Math.round (pas * 180 / Math.PI)) ;
+
     if (pas > Math.PI )   { pas -= Math.PI ; aiguille.rotation.x += (5/18) * Math.PI }
     if (pas < - Math.PI ) { pas += Math.PI ; aiguille.rotation.x -= (5/18) * Math.PI }
+    
     aiguille.rotation.x -= (5/18) * pas ;
-        // console.log("angle ecrou " + ecrou.rotation.x * 180 / Math.PI);
+         console.log("angle ecrou " + ecrou.rotation.x * 180 / Math.PI);
         // console.log("difference d angle " + pas * 180 / Math.PI)
         // console.log("angle aiguille " + aiguille.rotation.x * 180 / Math.PI)
     oldAngleEcrou = newAngleEcrou
@@ -444,12 +492,12 @@ function animeEcrou() {
 function razAiguilles() {
     for (let i = 0; i < aiguilles.length; i++) {
         //ecrouLaitons[i].rotation.x = 0;
-        aiguilles[i].rotation.x = +5 * Math.PI / 2;
+        aiguilles[i].rotation.x = + Math.PI / 2;
     }
 }
 
 function razTotaliseur() {
-    // TODO
+    animeRAZ()
 }
 
 

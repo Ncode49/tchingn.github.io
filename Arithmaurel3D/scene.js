@@ -1,3 +1,4 @@
+
 import * as THREE from './lib/three.module.js';
 import { OrbitControls } from './lib/OrbitControls.js';
 import { ColladaLoader } from './lib/ColladaLoader.js';
@@ -94,13 +95,13 @@ function init() {
     controls.maxDistance = 30;
 
 
-    // helper
+    // helper The X axis is red. The Y axis is green. The Z axis is blue.
     const axesHelper = new THREE.AxesHelper(10);
     scene.add(axesHelper);
     const helper = new THREE.PlaneHelper(planeFace, 20, 0xffff00);
     // scene.add(helper);
 
-    // instantiate a loader 
+    // instantiate a loader
     var loader = new ColladaLoader();
     // instancie l'arithmaurel et l'affiche a l'écran
     loader.load('modeles_3D/arithmaurel.dae',
@@ -150,7 +151,7 @@ function init() {
 /**
  * fonction qui initialise les objets mobiles
  * objectMove contient la liste des objets mobiles et interactifs (utilse pour detecter quand la souris clique sur un de ces elements)
- * on initialise en meme temps les etats des objets en mémoire 
+ * on initialise en meme temps les etats des objets en mémoire
  */
 
 function stockeObject() {
@@ -161,7 +162,12 @@ function stockeObject() {
     objectMove.push(ecrouCentre.children[2])
 
     for (let i = 0; i <= 7; i++) {
-        cadrans.push(childrens[i])
+        cadrans[i] = childrens[i] ;
+let angleInit = ( i - 3.5 ) * Math.PI/(3.6*3.5)  ;
+cadrans[i].rotation.x += angleInit ;
+cadrans[i].position.y += 0.76 * Math.sin (angleInit) ;  // ajuster avec le rayon du cadran
+cadrans[i].position.z += 0.76 * (1 - Math.cos(angleInit))
+
     }
     //console.log(cadrans)
 
@@ -187,7 +193,7 @@ function stockeObject() {
     ecrouLaitons.reverse()
         //console.log(ecrouLaitons)
 
-    console.log("object")
+ //   console.log("object")
         // console.log(objectMove)
 }
 
@@ -209,7 +215,7 @@ function animate() {
 
 
 /**
- * Lorsque la souris bouge, met a jour coordonnee de la souris 
+ * Lorsque la souris bouge, met a jour coordonnee de la souris
  * permet de faire bouger les elements si le click est enfoncée
  */
 
@@ -252,7 +258,7 @@ function onDocumentMouseMove(event) {
 }
 
 /**
- * traite l'evenement up dans ce cas redonne le controle a l'utilisateur ou termine evenement lorsque l'on bouge les parties mobiles 
+ * traite l'evenement up dans ce cas redonne le controle a l'utilisateur ou termine evenement lorsque l'on bouge les parties mobiles
  */
 function onDocumentMouseUp(event) {
     discretisationTirette()
@@ -269,13 +275,13 @@ function onDocumentMouseUp(event) {
 
 /**
  *  fonction de traitement de l'evenement lorsque le click est enfoncée
- * @param {*} event 
+ * @param {*} event
  */
 function onDocumentMouseDown(event) {
     //event.preventDefault()
     down = 1;
 
-    console.log("down")
+ //   console.log("down")
         // recupere position de la souris quand on bouge
         //  MoldX = (event.clientX / window.innerWidth) * 2 - 1;
         // MoldY = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -303,7 +309,7 @@ function onDocumentMouseDown(event) {
             case 'E':
                 let numero = evenement[5] - 1
                 oldAngleEcrou = ecrouLaitons[numero].rotation.x
-                console.log("angle " + oldAngleEcrou * 180 / Math.PI)
+ //               console.log("angle " + oldAngleEcrou * 180 / Math.PI)
                 etat = 1;
                 //  console.log("down: " + oldAngleEcrou * 180 / Math.PI)
                 // oldAngleAiguille = aiguilles[evenement[5] - 1].rotation.x
@@ -353,7 +359,7 @@ function animeRAZ() {
  */
 function animeTirette() {
     document.body.style.cursor = 'ns-resize';
-    // quand on appuis cela calcul 
+    // quand on appuis cela calcul
     // plante si on sort de l'ecran
     let numero = evenement[7] - 1
     let tirette = tirettes[numero]
@@ -377,12 +383,12 @@ function animeTirette() {
 
 
 
-// coordonnees centre 
+// coordonnees centre
 // 1 :  y= -2, z = -3
 // 2 :  y = -3.23, z = -1.2
 // 3 :  y = - 3.31 z = 1
 // 4 :  y = -2, z = -2.79
-/** 
+/**
  *  fonction d'animation de l'écrou si on translate vers la droite => rotation sens horaire
  * si translate souris vers la gauche => rotation sens anti-horaire
  */
@@ -409,66 +415,21 @@ function animeEcrou() {
     // mettre 2 if
     if (intersection.z <= coord[numero][1]) {
         newAngleEcrou = -Math.atan((intersection.y - coord[numero][0]) / (intersection.z - coord[numero][1])) + 3 * Math.PI / 2
-
     } else {
         newAngleEcrou = -Math.atan((intersection.y - coord[numero][0]) / (intersection.z - coord[numero][1])) + Math.PI / 2
     }
-    if (etat) {
-        if (intersection.y <= coord[numero][0] /*&& (oldAngleEcrou >= 0 && oldAngleEcrou < Math.PI / 4)*/ ) {
-            console.log("souris dessous")
-            console.log(oldAngleEcrou)
-            if ((oldAngleEcrou >= 0 && oldAngleEcrou <= Math.PI / 2) || (oldAngleEcrou <= 2 * Math.PI && oldAngleEcrou >= 3 * Math.PI / 2)) {
-                console.log("angle dessus")
-                ecrou.rotation.x -= Math.PI
-                aiguille.rotation.x -= Math.PI
-                    //console.log(oldAngleEcrou * 180 / Math.PI)
-
-                //aiguille.rotation.x += Math.PI
-            } else {
-
-            }
-
-            //  ecrou.rotation.x += Math.PI
-        }
-        if (intersection.y > coord[numero][0] /*&& (oldAngleEcrou >= 0 && oldAngleEcrou < Math.PI / 4)*/ ) {
-
-            console.log("souris dessus")
-            console.log(oldAngleEcrou * 180 / Math.PI)
-            if (oldAngleEcrou > Math.PI / 2 && oldAngleEcrou < 3 * Math.PI / 2) {
-                ecrou.rotation.x -= Math.PI
-                aiguille.rotation.x -= Math.PI
-
-
-            }
-            // ecrou.rotation.x += Math.PI
-        }
-    }
-    etat = 0;
+     etat = 0;
     //newAngleEcrou += Math.PI
 
 
     //console.log(etat)
     //console.log("nouvel angle " + newAngleEcrou * 180 / Math.PI)
     pas = newAngleEcrou - oldAngleEcrou;
-    ecrou.rotation.x += newAngleEcrou - oldAngleEcrou
-
-
-    if (ecrou.rotation.x < 0) {
-        console.log("ok")
-        ecrou.rotation.x += Math.PI * 2
-    }
-    if (ecrou.rotation.x > 2 * Math.PI) {
-        ecrou.rotation.x -= Math.PI * 2
-    }
-    console.log(ecrou.rotation.x * 180 / Math.PI)
-        /*
-        if (newAngleEcrou  2 * Math.PI) {
-            newAngleEcrou -= 2 / Math.PI
-        }
-        */
-        //console.log("difference d angle " + pas * 180 / Math.PI)
-        //console.log("angle aiguille " + aiguille.rotation.x * 180 / Math.PI)
-    aiguille.rotation.x += newAngleEcrou - oldAngleEcrou
+    ecrou.rotation.x += pas ;
+//console.log ("pas = " + Math.round (pas * 180 / Math.PI)) ;
+    if (pas > Math.PI )   { pas -= Math.PI ; aiguille.rotation.x += (5/18) * Math.PI }
+    if (pas < - Math.PI ) { pas += Math.PI ; aiguille.rotation.x -= (5/18) * Math.PI }
+    aiguille.rotation.x -= (5/18) * pas ;
         // console.log("angle ecrou " + ecrou.rotation.x * 180 / Math.PI);
         // console.log("difference d angle " + pas * 180 / Math.PI)
         // console.log("angle aiguille " + aiguille.rotation.x * 180 / Math.PI)
@@ -477,7 +438,7 @@ function animeEcrou() {
 }
 
 
-/** 
+/**
  * Remet à la position initile les aiguilles
  */
 function razAiguilles() {
@@ -568,7 +529,7 @@ function vueChangeProg() {
     if (pasChange > 0) {
         camera.position.x -= dPosX;
         camera.position.y -= dPosY;
-        camera.position.z -= dPosZ; // rotation	
+        camera.position.z -= dPosZ; // rotation
         camera.up.x -= dUpX;
         camera.up.y -= dUpY;
         camera.up.z -= dUpZ; // uniquement pivotement de la camÃ©ra

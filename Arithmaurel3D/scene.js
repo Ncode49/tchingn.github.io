@@ -99,7 +99,7 @@ function init() {
 
     // helper The X axis is red. The Y axis is green. The Z axis is blue.
     const axesHelper = new THREE.AxesHelper(10);
-    scene.add(axesHelper);
+   // scene.add(axesHelper);
     const helper = new THREE.PlaneHelper(planeFace, 20, 0xffff00);
     // scene.add(helper);
 
@@ -288,7 +288,6 @@ function onDocumentMouseUp(event) {
 function onDocumentMouseDown(event) {
     //event.preventDefault()
     down = 1;
-    BruitBouton.play()
  //   console.log("down")
         // recupere position de la souris quand on bouge
         //  MoldX = (event.clientX / window.innerWidth) * 2 - 1;
@@ -312,10 +311,14 @@ function onDocumentMouseDown(event) {
 
         switch (evenement[0]) {
             case 'R':
+                BruitBouton.play()
+
                 console.log("cle de remise a zero")
                 oldAngleCentre = ecrouCentre.rotation.x
                 break;
             case 'E':
+                BruitBouton.play()
+
                 let numero = evenement[5] - 1
                 oldAngleEcrou = ecrouLaitons[numero].rotation.x
  //               console.log("angle " + oldAngleEcrou * 180 / Math.PI)

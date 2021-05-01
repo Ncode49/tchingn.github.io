@@ -5,7 +5,8 @@ import { ColladaLoader } from './lib/ColladaLoader.js';
 
 var camera, controls, scene, renderer;
 const mouse = new THREE.Vector2();
-
+var BruitBouton = new Audio('sounds/Calculateur_mecanique.mp3');
+BruitBouton.preload = 'auto';
 var ecrouCentre;
 var childrens = [];
 // stocke les états
@@ -268,8 +269,9 @@ function onDocumentMouseMove(event) {
  */
 function onDocumentMouseUp(event) {
     discretisationTirette()
-
     //event.preventDefault()
+    BruitBouton.pause()
+    BruitBouton.currentTime = 0
     evenement = null;
     down = 0;
     document.body.style.cursor = 'auto';
@@ -286,7 +288,7 @@ function onDocumentMouseUp(event) {
 function onDocumentMouseDown(event) {
     //event.preventDefault()
     down = 1;
-
+    BruitBouton.play()
  //   console.log("down")
         // recupere position de la souris quand on bouge
         //  MoldX = (event.clientX / window.innerWidth) * 2 - 1;
@@ -600,4 +602,9 @@ function faceDessus() {
 function Move2() {
 
     console.log("ok")
+}
+ 
+
+function sound(){
+
 }

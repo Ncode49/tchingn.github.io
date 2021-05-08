@@ -112,7 +112,7 @@ function init() {
     // instantiate a loader
     var loader = new ColladaLoader();
     // instancie l'arithmaurel et l'affiche a l'écran
-    loader.load('modeles_3D/arithmaurel.dae',
+    loader.load('modeles_3D/test.dae',
 
         // Function when resource is loaded
 
@@ -154,24 +154,27 @@ function init() {
  */
 
 function stockeObject() {
-    ecrouCentre = childrens[24];
+    console.log(childrens)
+    ecrouCentre = childrens[1];
     ecrouCentre.rotation.x += Math.PI / 5
     console.log(ecrouCentre.rotation.x*180/Math.PI)
     objectMove.push(ecrouCentre.children[0])
     objectMove.push(ecrouCentre.children[1])
     objectMove.push(ecrouCentre.children[2])
 
-    for (let i = 0; i <= 7; i++) {
+    for (let i = 18; i <= 25; i++) {
+        /*
         cadrans[i] = childrens[i] ;
         let angleInit = ( i - 3.5 ) * Math.PI/(3.6*3.5)  ;
         cadrans[i].rotation.x += angleInit ;
         cadrans[i].position.y += 0.76 * Math.sin (angleInit) ;  // ajuster avec le rayon du cadran
         cadrans[i].position.z += 0.76 * (1 - Math.cos(angleInit))
+        */
 
     }
     //console.log(cadrans)
 
-    for (let i = 12; i <= 19; i++) {
+    for (let i = 6; i <= 13; i++) {
         tirettes.push(childrens[i])
         objectMove.push(childrens[i].children[12])
         objectMove.push(childrens[i].children[10])
@@ -179,19 +182,19 @@ function stockeObject() {
 
     }
     //console.log(tirettes)
-    for (let i = 8; i <= 11; i++) {
+    for (let i = 14; i <= 17; i++) {
         aiguilles.push(childrens[i])
     }
-    aiguilles.reverse() ;
+   // aiguilles.reverse() ;
         razAiguilles() ; // remise à zéro aiguilles et fantome
         //console.log(aiguilles)
-    for (let i = 20; i <= 23; i++) {
+    for (let i = 2; i <= 5; i++) {
         childrens[i].rotation.x = 0
         ecrouLaitons.push(childrens[i])
         objectMove.push(childrens[i].children[0])
 
     }
-    ecrouLaitons.reverse()
+    tirettes.reverse()
         //console.log(ecrouLaitons)
 
  //   console.log("object")

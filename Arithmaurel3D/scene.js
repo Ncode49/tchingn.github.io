@@ -6,14 +6,14 @@ var camera, controls, scene, renderer;
 const mouse = new THREE.Vector2();
 var BruitBouton = new Audio('sounds/Calculateur_mecanique.mp3');
 BruitBouton.preload = 'auto';
-BruitBouton.loop = false ;
+BruitBouton.loop = false;
 var ecrouCentre;
 var childrens = [];
 // stocke les états
 var aiguilles = [];
-var fantAiguilles = new Array (4) ; // fantomes aiguilles
-var seuil = Math.PI/50 ;  // valeur arbitraire
-var pente = 2*(Math.PI/9)/(1-(2*seuil)/(Math.PI/9)) ; // pente de (seuil, 0) à (PI/9 - seuil, PI/9)
+var fantAiguilles = new Array(4); // fantomes aiguilles
+var seuil = Math.PI / 50; // valeur arbitraire
+var pente = 2 * (Math.PI / 9) / (1 - (2 * seuil) / (Math.PI / 9)); // pente de (seuil, 0) à (PI/9 - seuil, PI/9)
 var cadrans = [];
 var ecrouLaitons = [];
 var tirettes = [];
@@ -49,7 +49,7 @@ var intersection = new THREE.Vector3();
 // variable pour le changement d'état affiché
 var inputTiret = [0, 0, 0, 0, 0, 0, 0, 0]; // entrée tirettes
 var inputCadr = [0, 0, 0, 0]; // entrée cadrans
-var oldInputCadr ; // variation de valeur
+var oldInputCadr; // variation de valeur
 var output
 
 // variable positionnnement des aiguilles et ecrous
@@ -64,7 +64,7 @@ animate();
 renderer.domElement.addEventListener('mousemove', onDocumentMouseMove, false);
 renderer.domElement.addEventListener('mousedown', onDocumentMouseDown, false);
 renderer.domElement.addEventListener('mouseup', onDocumentMouseUp, false);
-BruitBouton.addEventListener('ended', function(e){BruitBouton.currentTime = 0.2}, false);
+BruitBouton.addEventListener('ended', function(e) { BruitBouton.currentTime = 0.2 }, false);
 
 // Boutons
 const RAZaiguilles = document.getElementById("RAZaiguilles");
@@ -85,7 +85,7 @@ function init() {
     // Scene
     scene = new THREE.Scene();
     // Rendu sur la page
-    renderer = new THREE.WebGLRenderer({ antialias: true , alpha: true});
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
@@ -120,12 +120,12 @@ function init() {
 
             // for (let i = 0; i < collada.scene.children.length; i++) { childrens.push(collada.scene.children[i]); }
             // affichage de la scene
-            childrens = collada.scene.children ;
-            scene.add(collada.scene) ;
+            childrens = collada.scene.children;
+            scene.add(collada.scene);
             //console.log(collada.scene.children)
             // recuperations des elements
-            stockeObject() ;
-                //   scene.add(collada.scene.children[2]);
+            stockeObject();
+            //   scene.add(collada.scene.children[2]);
 
         },
         // Function called when download progresses
@@ -136,9 +136,9 @@ function init() {
     // charger et positionner les autres éléments en dupliquant le code précédent
 
     // Lumiere
-    let light = new THREE.DirectionalLight( 0xffffff , 0.2);
-    light.position.set( 1, 1, 0 );
-    scene.add( light );
+    let light = new THREE.DirectionalLight(0xffffff, 0.2);
+    light.position.set(1, 1, 0);
+    scene.add(light);
     var lightAmb = new THREE.AmbientLight(0xffffff)
     scene.add(lightAmb)
 
@@ -157,7 +157,7 @@ function stockeObject() {
     console.log(childrens)
     ecrouCentre = childrens[1];
     ecrouCentre.rotation.x += Math.PI / 5
-    console.log(ecrouCentre.rotation.x*180/Math.PI)
+    console.log(ecrouCentre.rotation.x * 180 / Math.PI)
     objectMove.push(ecrouCentre.children[0])
     objectMove.push(ecrouCentre.children[1])
     objectMove.push(ecrouCentre.children[2])
@@ -185,9 +185,9 @@ function stockeObject() {
     for (let i = 14; i <= 17; i++) {
         aiguilles.push(childrens[i])
     }
-   // aiguilles.reverse() ;
-        razAiguilles() ; // remise à zéro aiguilles et fantome
-        //console.log(aiguilles)
+    // aiguilles.reverse() ;
+    razAiguilles(); // remise à zéro aiguilles et fantome
+    //console.log(aiguilles)
     for (let i = 2; i <= 5; i++) {
         childrens[i].rotation.x = 0
         ecrouLaitons.push(childrens[i])
@@ -197,8 +197,8 @@ function stockeObject() {
     tirettes.reverse()
         //console.log(ecrouLaitons)
 
- //   console.log("object")
-        // console.log(objectMove)
+    //   console.log("object")
+    // console.log(objectMove)
 }
 
 function onWindowResize() {
@@ -234,21 +234,21 @@ function onDocumentMouseMove(event) {
     if (!down) {
         raycaster.setFromCamera(mouse, camera);
         const intersects = raycaster.intersectObjects(objectMove);
-                document.body.style.cursor = intersects.length > 0 ? 'grab' : 'default';
-     }
+        document.body.style.cursor = intersects.length > 0 ? 'grab' : 'default';
+    }
 
     //   console.log(mouse)
     // si la touche est enfonce et que evenement ne correspond pas a la remise a zero
     // si on veut ajouter d'autres evenement par simple click, ajouter une condition supplémentaire
     if (down && evenement != null) {
         switch (evenement[0]) {
-            case 'R':    // la remise à zéro bouge
+            case 'R': // la remise à zéro bouge
                 animeCentre()
                 break;
-            case 'E':    // l'ecrou bouge
+            case 'E': // l'ecrou bouge
                 animeEcrou()
                 break;
-            case 'T':    // la tirette bouge
+            case 'T': // la tirette bouge
                 animeTirette()
                 break;
         }
@@ -261,7 +261,7 @@ function onDocumentMouseMove(event) {
  */
 function onDocumentMouseUp(event) {
     discretisationTirette()
-    //event.preventDefault()
+        //event.preventDefault()
     BruitBouton.pause()
     BruitBouton.currentTime = 0
     evenement = null;
@@ -280,10 +280,10 @@ function onDocumentMouseUp(event) {
 function onDocumentMouseDown(event) {
     //event.preventDefault()
     down = 1;
- //   console.log("down")
-        // recupere position de la souris quand on bouge
-        //  MoldX = (event.clientX / window.innerWidth) * 2 - 1;
-        // MoldY = -(event.clientY / window.innerHeight) * 2 + 1;
+    //   console.log("down")
+    // recupere position de la souris quand on bouge
+    //  MoldX = (event.clientX / window.innerWidth) * 2 - 1;
+    // MoldY = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
     // stoppe le controle sur les deplacements pour pouvoir bouger l'objet
 
@@ -311,9 +311,9 @@ function onDocumentMouseDown(event) {
             case 'E':
                 let numero = evenement[5] - 1
                 oldAngleEcrou = ecrouLaitons[numero].rotation.x
- //               console.log("angle " + oldAngleEcrou * 180 / Math.PI)
-                //  console.log("down: " + oldAngleEcrou * 180 / Math.PI)
-                // oldAngleAiguille = aiguilles[evenement[5] - 1].rotation.x
+                    //               console.log("angle " + oldAngleEcrou * 180 / Math.PI)
+                    //  console.log("down: " + oldAngleEcrou * 180 / Math.PI)
+                    // oldAngleAiguille = aiguilles[evenement[5] - 1].rotation.x
                 document.body.style.cursor = 'ew-resize';
                 break;
             case 'T':
@@ -386,7 +386,7 @@ var ecrouCentrecoord = []
 ecrouCentrecoord.push(0.18312431445661992)
 ecrouCentrecoord.push(-0.18312431445662275)
 
-function animeCentre(){
+function animeCentre() {
     let pas;
     raycaster.setFromCamera(mouse, camera);
     // calcul intersection souris plan => intersection
@@ -394,8 +394,8 @@ function animeCentre(){
     console.log("zintersection" + intersection.z)
     console.log("yintersection" + intersection.y)
     console.log(intersection.y)
-    if(intersection.y > ecrouCentrecoord[0])
-        newAnglecentre = +Math.atan((intersection.z - ecrouCentrecoord[1]) / (intersection.y - ecrouCentrecoord[0])) -Math.PI/2
+    if (intersection.y > ecrouCentrecoord[0])
+        newAnglecentre = +Math.atan((intersection.z - ecrouCentrecoord[1]) / (intersection.y - ecrouCentrecoord[0])) - Math.PI / 2
 
     //newAngleEcrou += Math.PI
 
@@ -406,18 +406,18 @@ function animeCentre(){
     pas = newAnglecentre - oldAngleCentre;
 
     // l'angle de la premiere frame est fausse, on l'enleve
-    if(etat == 1){
+    if (etat == 1) {
         pas = 0;
         etat = 0
     }
     ecrouCentre.rotation.x += pas
-    console.log("valeur ecrou" + ecrouCentre.rotation.x*180/Math.PI)
+    console.log("valeur ecrou" + ecrouCentre.rotation.x * 180 / Math.PI)
     oldAngleCentre = newAnglecentre
-    if(ecrouCentre.rotation.x*180/Math.PI > 216){
-        ecrouCentre.rotation.x = 215.999999999*Math.PI/180
+    if (ecrouCentre.rotation.x * 180 / Math.PI > 216) {
+        ecrouCentre.rotation.x = 215.999999999 * Math.PI / 180
     }
-    if(ecrouCentre.rotation.x*180/Math.PI < 138){
-        ecrouCentre.rotation.x = 138.0001*Math.PI/180
+    if (ecrouCentre.rotation.x * 180 / Math.PI < 138) {
+        ecrouCentre.rotation.x = 138.0001 * Math.PI / 180
     }
 }
 
@@ -426,12 +426,18 @@ function animeCentre(){
 // 2 :  y = -3.23, z = -1.2
 // 3 :  y = - 3.31 z = 1
 // 4 :  y = -2, z = -2.79
-const coord = [[-2, -3],[-3.23, -1.2],[-3.31, 1],[-2, 2.79]] ;
+const coord = [
+    [-2, -3],
+    [-3.23, -1.2],
+    [-3.31, 1],
+    [-2, 2.79]
+];
 
 /**
  *  fonction d'animation de l'écrou : l'écrou suit
  *  le mouvement de rotation de la souris autour de l'axe
  */
+
 function animeEcrou() {
 
     document.body.style.cursor = 'ew-resize';
@@ -456,62 +462,78 @@ function animeEcrou() {
     //console.log(etat)
     //console.log("nouvel angle " + newAngleEcrou * 180 / Math.PI)
     pas = newAngleEcrou - oldAngleEcrou;
-    if(etat ==1){
+    if (etat == 1) {
         pas = 0
         etat = 0;
     }
 
-    ecrou.rotation.x += pas ;
-if (Math.abs(pas) > 0.1 ) { BruitBouton.play()} ;
+    ecrou.rotation.x += pas;
+    if (Math.abs(pas) > 0.1) { BruitBouton.play() };
 
 
-console.log ("pas = " + pas) ;
+    console.log("pas = " + pas);
 
-    if (pas > Math.PI )   { pas -= Math.PI ; fantAiguilles[numero] += (5/18) * Math.PI }
-    if (pas < - Math.PI ) { pas += Math.PI ; fantAiguilles[numero] -= (5/18) * Math.PI }
-    fantAiguilles[numero] -= (5/18) * pas ;
+    if (pas > Math.PI) {
+        pas -= Math.PI;
+        fantAiguilles[numero] += (5 / 18) * Math.PI
+    }
+    if (pas < -Math.PI) {
+        pas += Math.PI;
+        fantAiguilles[numero] -= (5 / 18) * Math.PI
+    }
 
-        var oldInputCadr = inputCadr[numero] ;
-        var roundAiguille = (Math.PI/2) + Math.round ((fantAiguilles[numero]-Math.PI/2)/(Math.PI/9))*(Math.PI/9);
-        var difference = fantAiguilles[numero]-roundAiguille ;
-        if (Math.abs(difference) <= seuil) {aiguilles[numero].rotation.x = roundAiguille }
-        else { if (difference > 0) {aiguilles[numero].rotation.x = roundAiguille + (difference-seuil) * pente }
-                                  else {aiguilles[numero].rotation.x = roundAiguille + (difference+seuil) * pente } }
-        inputCadr[numero] = (aiguilles[numero].rotation.x - Math.PI/2) / (Math.PI/9) ;
+    // coefficient pour l'aiguille
+    fantAiguilles[numero] -= (5 / 18) * pas;
 
-        if (Math.abs(inputCadr[numero].toFixed(2)) % 1 < 0.001){inputCadr[numero] = Math.round(inputCadr[numero]) } ; // entier
-        calcResult(numero, inputCadr[numero]-oldInputCadr ) ;
-        affichCadran() ;
+    var oldInputCadr = inputCadr[numero];
+    var roundAiguille = (Math.PI / 2) + Math.round((fantAiguilles[numero] - Math.PI / 2) / (Math.PI / 9)) * (Math.PI / 9);
+    var difference = fantAiguilles[numero] - roundAiguille;
 
-console.log("angle ecrou " + ecrou.rotation.x * 180 / Math.PI);
+    // si plus petit que le seuil, alors arrondi a l'angle entier le plus proche
+    if (Math.abs(difference) <= seuil) { aiguilles[numero].rotation.x = roundAiguille } else {
+        if (difference > 0) { aiguilles[numero].rotation.x = roundAiguille + (difference - seuil) * pente } else { aiguilles[numero].rotation.x = roundAiguille + (difference + seuil) * pente }
+    }
 
-    oldAngleEcrou = newAngleEcrou ;
+    inputCadr[numero] = (aiguilles[numero].rotation.x - Math.PI / 2) / (Math.PI / 9);
+    console.log("valeur cadran" + inputCadr[numero])
+
+    // arrondi de la valeur a l'entier
+    if (Math.abs(inputCadr[numero].toFixed(2)) % 1 < 0.001) { inputCadr[numero] = Math.round(inputCadr[numero]) }; // entier
+    // numerp = numero du cadran 
+    calcResult(numero, inputCadr[numero] - oldInputCadr);
+    affichCadran();
+
+    console.log("angle ecrou " + ecrou.rotation.x * 180 / Math.PI);
+
+    oldAngleEcrou = newAngleEcrou;
 }
 
 /**
  *  fonction de calcul propre à l'arithmaurel, code adapté de arithmaurel 2D
  */
-function calcResult (numero, increment) {
-        produit += multiplicande * increment * Math.pow(10, numero);
-console.log('numero = ' + numero + ' increment = ' + increment + ' produit = ' + Math.round(produit) )        ;
+
+function calcResult(numero, increment) {
+    produit += multiplicande * increment * Math.pow(10, numero);
+    console.log('numero = ' + numero + ' increment = ' + increment + ' produit = ' + Math.round(produit));
 }
 
 /**
  * Remet à la position initile les aiguilles
  */
+
 function razAiguilles() {
     for (let i = 0; i < aiguilles.length; i++) {
-         aiguilles[i].rotation.x = Math.PI/2;
-                 fantAiguilles[i] = Math.PI/2 ;
-                 inputCadr[i] = 0 ;
+        aiguilles[i].rotation.x = Math.PI / 2;
+        fantAiguilles[i] = Math.PI / 2;
+        inputCadr[i] = 0;
     }
-        affichCadran() ;
+    affichCadran();
 }
 
 function razTotaliseur() {
-        produit = 0 ;
-    animeRAZ() ;
-        console.log('RAZ produit') ;
+    produit = 0;
+    animeRAZ();
+    console.log('RAZ produit');
 }
 
 
@@ -548,7 +570,7 @@ function discretisationTirette() {
         } else if (tirette.position.x >= 8.32 && tirette.position.x < 8.6) { //8.6-8.32 = 0.28
             tirette.position.x = 8.537
             val_Tirettes[last_Tirette] = 8
-        } else if (tirette.position.x >= 8.6 && tirette.position.x < 8.8) {  // 8.8-8.6 = 0.2
+        } else if (tirette.position.x >= 8.6 && tirette.position.x < 8.8) { // 8.8-8.6 = 0.2
             tirette.position.x = 8.799
             val_Tirettes[last_Tirette] = 9
         }
@@ -557,14 +579,17 @@ function discretisationTirette() {
     }
 }
 
+
+// multiplicande est la valeur du premier produit des tirettes
 function affichTirette() {
+    // &nbps; est le caractere d'espace
     document.getElementById('tirette').innerHTML = '&nbsp;';
-        multiplicande = 0 ;
+    multiplicande = 0;
     for (let i = 7; i >= 0; i--) {
         document.getElementById('tirette').innerHTML += val_Tirettes[i] + '&nbsp;'
-                multiplicande = 10*multiplicande + val_Tirettes[i] ;
+        multiplicande = 10 * multiplicande + val_Tirettes[i];
     }
-// console.log('multiplicande = ' + multiplicande ) ;
+    // console.log('multiplicande = ' + multiplicande ) ;
 }
 
 
@@ -620,6 +645,6 @@ function Move2() {
 }
 
 
-function sound(){
+function sound() {
 
 }

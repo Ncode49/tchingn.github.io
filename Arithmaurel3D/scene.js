@@ -25,7 +25,7 @@ var last_Tirette = -1;
 var objectMove = [];
 // boleen pour l'etat de la souris qui est soit enfoncée ou non
 var down = 0;
-
+const roueOffset = 1.5466698649912853
 const planeDessus = new THREE.Plane(new THREE.Vector3(0, 1, 0), -3.92);
 const planeFace = new THREE.Plane(new THREE.Vector3(1, 0, 0), -8);
 
@@ -163,14 +163,8 @@ function stockeObject() {
     objectMove.push(ecrouCentre.children[2])
 
     for (let i = 18; i <= 25; i++) {
-        /*
-        cadrans[i] = childrens[i] ;
-        let angleInit = ( i - 3.5 ) * Math.PI/(3.6*3.5)  ;
-        cadrans[i].rotation.x += angleInit ;
-        cadrans[i].position.y += 0.76 * Math.sin (angleInit) ;  // ajuster avec le rayon du cadran
-        cadrans[i].position.z += 0.76 * (1 - Math.cos(angleInit))
-        */
 
+        cadrans.push(childrens[i])
     }
     //console.log(cadrans)
 
@@ -224,6 +218,8 @@ function animate() {
  */
 
 function onDocumentMouseMove(event) {
+    animeRoue()
+
     //event.preventDefault()
     // recupere position de la souris quand on bouge
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -275,15 +271,11 @@ function onDocumentMouseUp(event) {
 
 /**
  *  fonction de traitement de l'evenement lorsque le click est enfoncée
- * @param {*} event
  */
 function onDocumentMouseDown(event) {
-    //event.preventDefault()
+
+
     down = 1;
-    //   console.log("down")
-    // recupere position de la souris quand on bouge
-    //  MoldX = (event.clientX / window.innerWidth) * 2 - 1;
-    // MoldY = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
     // stoppe le controle sur les deplacements pour pouvoir bouger l'objet
 
@@ -311,9 +303,6 @@ function onDocumentMouseDown(event) {
             case 'E':
                 let numero = evenement[5] - 1
                 oldAngleEcrou = ecrouLaitons[numero].rotation.x
-                    //               console.log("angle " + oldAngleEcrou * 180 / Math.PI)
-                    //  console.log("down: " + oldAngleEcrou * 180 / Math.PI)
-                    // oldAngleAiguille = aiguilles[evenement[5] - 1].rotation.x
                 document.body.style.cursor = 'ew-resize';
                 break;
             case 'T':
@@ -323,13 +312,32 @@ function onDocumentMouseDown(event) {
 
 
 
-        //  console.log(evenement)
     }
 
     // on stoppe le control pour la position de l'arithmmaurel
     // controls.enabled = false;
 }
 
+/**
+ * utiliser produit pour mettre a jour les cadrans en fonctions de leurs angles
+ */
+function animeRoue() {
+    console.log(cadrans)
+    console.log("valeur du produit final " + produit)
+    let reste;
+    let cadran = []
+    let quotient = produit;
+    // recupere de la plus petite a la plus grande valeur a la plus petite
+    for (let i = 7; i >= 0; i--) {
+        //console.log("quotient= " + quotient)
+        reste = quotient % 10
+        cadran.push(reste)
+        quotient = (quotient - reste) / 10
+            //console.log("reste= " + reste)
+        cadrans[i].rotation.x = reste * Math.PI / 5 + roueOffset
+    }
+    console.log("valeur reste" + cadran)
+}
 /**
  * Fonction qui déclenche l'animation de remise a zero de l'écrou au centre
  */
@@ -514,7 +522,7 @@ function animeEcrou() {
 
 function calcResult(numero, increment) {
     produit += multiplicande * increment * Math.pow(10, numero);
-    console.log('numero = ' + numero + ' increment = ' + increment + ' produit = ' + Math.round(produit));
+    console.log('numero = ' + numero + ' increment = ' + increment + ' produit = ' + produit);
 }
 
 /**

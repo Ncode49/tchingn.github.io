@@ -224,7 +224,6 @@ function onDocumentMouseMove(event) {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-
     // si click non enfoncé, change le curseur si selectionne objet mobile
     if (!down) {
         raycaster.setFromCamera(mouse, camera);
@@ -332,6 +331,12 @@ function animeRAZ() {
     nbanimationsRZ--;
     animeReturnZero = requestAnimationFrame(animeRAZ);
     if (nbanimationsRZ >= 40) {
+        for (let i = 0; i < 8; i++) {
+            cadrans[i].rotation.x -= Math.PI / 10;
+            if (cadrans[i].rotation.x < angleInitCadrans[i]) {
+                cadrans[i].rotation.x = angleInitCadrans[i];
+            }
+        }
         ecrouCentre.rotation.x -= Math.PI / 100;
     } else {
         ecrouCentre.rotation.x += Math.PI / 100;
@@ -533,11 +538,22 @@ function razAiguilles() {
 
 function razTotaliseur() {
     produit = 0;
-    animeRAZ();
     for (let i = 0; i < 8; i++) {
-        cadrans[i].rotation.x = angleInitCadrans[i];
+        // met les valeurs entre offset et offset + 2*Math.PI
+        if (cadrans[i].rotation.x > angleInitCadrans[i] + Math.PI * 2) {
+            while (cadrans[i].rotation.x > angleInitCadrans + Math.PI * 2) {
+                cadrans[i].rotation.x -= 2 * Math.PI
+            }
+        }
+        if (cadrans[i].rotation.x < angleInitCadrans[i]) {
+            while (cadrans[i].rotation.x < angleInitCadrans) {
+                cadrans[i].rotation.x += 2 * Math.PI
+            }
+        }
         resultat[i] = 0
     }
+    animeRAZ();
+
     console.log('RAZ produit');
 }
 

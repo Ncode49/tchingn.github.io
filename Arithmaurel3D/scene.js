@@ -561,9 +561,7 @@ function razAiguilles() {
 }
 
 function razTotaliseur() {
-
     produit = 0;
-
     cadransNormal()
     BruitBouton.play()
     animeRazTot();

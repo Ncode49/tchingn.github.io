@@ -4,12 +4,12 @@ import { BruitBouton } from './sound.js'
 import { camera, controls, tirettes, val_Tirettes, angleInitCadrans, scene, renderer, objectMove, ecrouCentre, cadrans, aiguilles, ecrouLaitons, fantAiguilles, inputCadr, init } from './initScene.js'
 import { faceDessus, faceVue } from './vueChangement.js'
 
-const mouse = new THREE.Vector2();
+
 
 
 // stocke les états
 
-
+const mouse = new THREE.Vector2();
 var seuil = Math.PI / 50; // valeur arbitraire
 var pente = 2.9 * (Math.PI / 9) / (1 - (2 * seuil) / (Math.PI / 9)); // pente de (seuil, 0) à (PI/9 - seuil, PI/9)
 // le 2.9 est pragmatique et non scientifique. Je ne sais pas d'où il vient.
@@ -101,7 +101,6 @@ function animate() {
  */
 
 function onDocumentMouseMove(event) {
-    //event.preventDefault()
     // recupere position de la souris quand on bouge
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;

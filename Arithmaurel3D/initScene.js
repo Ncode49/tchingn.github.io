@@ -105,7 +105,10 @@ function initCollada() {
  */
 
 function stockeObject() {
+
     initEcrouCentre()
+
+    //console.log(cadrans)
     initTirettes()
     initAiguilles();
     initCadrans()

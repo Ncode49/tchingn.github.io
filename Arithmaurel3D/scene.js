@@ -78,9 +78,21 @@ RAZtotaliseur.addEventListener("click", razTotaliseur);
 face.addEventListener("click", faceVue)
 dessus.addEventListener("click", faceDessus)
 
+// Bouton Simulation
+const addition = document.getElementById("bAddition");
+const soustraction = document.getElementById("bSoustraction");
+const multiplication = document.getElementById("bMultiplication");
+const division = document.getElementById("bDivision");
+const sigma = document.getElementById("bSigma")
+addition.addEventListener("click", ok)
+soustraction.addEventListener("click", ok)
+multiplication.addEventListener("click", ok)
+division.addEventListener("click", ok)
+sigma.addEventListener("click", ok)
 
-
-
+function ok() {
+    console.log("ok")
+}
 
 function init() {
 

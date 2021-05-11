@@ -52,10 +52,18 @@ button {
 
 button:hover {
     background-color: rgb(187, 184, 184);
+    cursor: pointer;
 }
 
 #button {
     position: absolute;
     display: flex;
     flex-direction: column;
+}
+
+#exemples {
+    justify-content: space-between;
+    margin: 10px;
+    display: flex;
+    cursor: pointer;
 }

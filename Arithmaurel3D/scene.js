@@ -3,8 +3,8 @@ import { affichCadran } from './affichageBouton.js'
 import { BruitBouton } from './sound.js'
 import { camera, controls, tirettes, val_Tirettes, angleInitCadrans, scene, renderer, objectMove, ecrouCentre, cadrans, aiguilles, ecrouLaitons, fantAiguilles, inputCadr, init } from './initScene.js'
 import { faceDessus, faceVue } from './vueChangement.js'
-
-
+import { razAiguilles } from './animeAiguillesRaz.js'
+import { razTotaliseur, cadransNormal } from './animeTotaliseurRaz.js'
 
 
 // stocke les états
@@ -23,7 +23,6 @@ var last_Tirette = -1;
 
 // boleen pour l'etat de la souris qui est soit enfoncée ou non
 var down = 0;
-var animeReturnZ;
 const planeDessus = new THREE.Plane(new THREE.Vector3(0, 1, 0), -3.92);
 const planeFace = new THREE.Plane(new THREE.Vector3(1, 0, 0), -8);
 
@@ -35,9 +34,6 @@ var evenement = null;
 var raycaster = new THREE.Raycaster();
 
 // letiable pour stocker les evenements pour RAZ
-var nbanimationsRZ = 80;
-var nbanimationsRZaig = 90;
-var animeReturnZero;
 
 var intersection = new THREE.Vector3();
 // variable pour le changement d'état affiché
@@ -61,7 +57,13 @@ const RAZtotaliseur = document.getElementById("RAZtotaliseur");
 const face = document.getElementById("face");
 const dessus = document.getElementById("dessus");
 RAZaiguilles.addEventListener("click", razAiguilles);
-RAZtotaliseur.addEventListener("click", razTotaliseur);
+RAZtotaliseur.addEventListener("click", function() {
+    razTotaliseur()
+    produit = 0;
+    for (let i = 0; i < 8; i++) {
+        resultat[i] = 0
+    }
+});
 face.addEventListener("click", faceVue)
 dessus.addEventListener("click", faceDessus)
 
@@ -81,19 +83,11 @@ function ok() {
     console.log("ok")
 }
 
-
-
-
-
-
 function animate() {
     requestAnimationFrame(animate);
-
     controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
     renderer.render(scene, camera);
 }
-
-
 
 /**
  * Lorsque la souris bouge, met a jour coordonnee de la souris
@@ -119,6 +113,10 @@ function onDocumentMouseMove(event) {
         switch (evenement[0]) {
             case 'R': // la remise à zéro bouge
                 animeCentre()
+
+                for (let i = 0; i < 8; i++) {
+                    resultat[i] = 0
+                }
                 break;
             case 'E': // l'ecrou bouge
                 animeEcrou()
@@ -176,9 +174,6 @@ function onDocumentMouseDown(event) {
             case 'E':
                 let numero = evenement[5] - 1
                 oldAngleEcrou = ecrouLaitons[numero].rotation.x
-                    //               console.log("angle " + oldAngleEcrou * 180 / Math.PI)
-                    //  console.log("down: " + oldAngleEcrou * 180 / Math.PI)
-                    // oldAngleAiguille = aiguilles[evenement[5] - 1].rotation.x
                 document.body.style.cursor = 'ew-resize';
                 break;
             case 'T':
@@ -188,36 +183,6 @@ function onDocumentMouseDown(event) {
     }
 }
 
-/**
- * Fonction qui déclenche l'animation de remise a zero de l'écrou au centre
- */
-function animeRazTot() {
-    nbanimationsRZ--;
-    animeReturnZero = requestAnimationFrame(animeRazTot);
-    if (nbanimationsRZ >= 40) {
-        for (let i = 0; i < 8; i++) {
-            cadrans[i].rotation.x -= Math.PI / 10;
-            if (cadrans[i].rotation.x < angleInitCadrans[i]) {
-                cadrans[i].rotation.x = angleInitCadrans[i];
-            }
-        }
-        ecrouCentre.rotation.x -= Math.PI / 100;
-    } else {
-        ecrouCentre.rotation.x += Math.PI / 100;
-    }
-    // objectParent.parent.rotation.x -= Math.PI/50;
-
-    renderer.render(scene, camera);
-
-    if (nbanimationsRZ == 0) {
-        console.log("fini")
-        nbanimationsRZ = 80;
-
-        window.cancelAnimationFrame(animeReturnZero);
-        BruitBouton.pause()
-        BruitBouton.currentTime = 0
-    }
-}
 
 
 /**
@@ -390,26 +355,8 @@ function calcResult(numero, increment) {
 
 
 
-function razAiguilles() {
-    aiguillesNormal()
-    console.log(aiguilles[0].rotation.x)
-    animeRazAig();
-    for (let i = 0; i < 4; i++) {
-        fantAiguilles[i] = Math.PI / 2;
-        inputCadr[i] = 0;
-    }
-    affichCadran(inputCadr);
 
-}
 
-function razTotaliseur() {
-    produit = 0;
-    cadransNormal()
-    BruitBouton.play()
-    animeRazTot();
-    console.log('RAZ produit');
-
-}
 
 
 function discretisationTirette() {
@@ -460,78 +407,5 @@ function affichTirette() {
     for (let i = 7; i >= 0; i--) {
         document.getElementById('tirette').innerHTML += val_Tirettes[i] + '&nbsp;'
         multiplicande = 10 * multiplicande + val_Tirettes[i];
-    }
-}
-
-
-
-/**
- * faire passer les valeurs entre offset et offset + 2*Math.PI pour l'animation
- */
-function cadransNormal() {
-    for (let i = 0; i < 8; i++) {
-        // met les valeurs entre offset et offset + 2*Math.PI
-        if (cadrans[i].rotation.x > angleInitCadrans[i] + Math.PI * 2) {
-            while (cadrans[i].rotation.x > angleInitCadrans + Math.PI * 2) {
-                cadrans[i].rotation.x -= 2 * Math.PI
-            }
-        }
-        if (cadrans[i].rotation.x < angleInitCadrans[i]) {
-            while (cadrans[i].rotation.x < angleInitCadrans) {
-                cadrans[i].rotation.x += 2 * Math.PI
-            }
-        }
-        resultat[i] = 0
-    }
-}
-/**
- * faire passer les valeurs entre offset et offset + 2*Math.PI pour l'animation
- */
-function aiguillesNormal() {
-    for (let i = 0; i < 4; i++) {
-        console.log(aiguilles[i].rotation.x)
-            // met les valeurs entre offset et offset + 2*Math.PI
-        if (aiguilles[i].rotation.x > Math.PI / 2 + Math.PI * 2) {
-            while (aiguilles[i].rotation.x > Math.PI / 2 + Math.PI * 2) {
-                aiguilles[i].rotation.x -= 2 * Math.PI
-            }
-        }
-        if (aiguilles[i].rotation.x < Math.PI / 2) {
-            while (aiguilles[i].rotation.x < Math.PI / 2) {
-                aiguilles[i].rotation.x += 2 * Math.PI
-            }
-        }
-    }
-
-}
-
-/**
- * change de 90 a 0 tout les 10 frames
- */
-function animeRazAig() {
-    nbanimationsRZaig--;
-    // console.log(nbanimationsRZaig)
-    animeReturnZ = requestAnimationFrame(animeRazAig)
-    if (nbanimationsRZaig % 5 == 0) {
-        for (let i = 0; i <= 3; i++) {
-            console.log(aiguilles[i].rotation.x)
-            if (aiguilles[i].rotation.x < Math.PI / 2) {
-                aiguilles[i].rotation.x = Math.PI / 2
-            }
-            if (aiguilles[i].rotation.x > Math.PI / 2 + Math.PI / 9) {
-                aiguilles[i].rotation.x -= Math.PI / 9;
-            } else {
-                aiguilles[i].rotation.x = Math.PI / 2
-            }
-        }
-
-    }
-
-    renderer.render(scene, camera);
-    console.log(nbanimationsRZ)
-    if (nbanimationsRZaig == 0) {
-        nbanimationsRZaig = 90;
-        console.log("fini")
-        window.cancelAnimationFrame(animeReturnZ);
     }
 }

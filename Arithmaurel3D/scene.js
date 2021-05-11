@@ -348,6 +348,8 @@ function animeRAZ() {
     if (nbanimationsRZ == 0) {
         console.log("fini")
         nbanimationsRZ = 80;
+        BruitBouton.pause()
+        BruitBouton.currentTime = 0
         window.cancelAnimationFrame(animeReturnZero);
 
     }
@@ -550,8 +552,8 @@ function razTotaliseur() {
     produit = 0;
 
     cadransNormal()
+    BruitBouton.play()
     animeRAZ();
-
     console.log('RAZ produit');
 }
 
@@ -652,6 +654,9 @@ function faceDessus() {
     vueChange(15, 14, 0, 0, 1, 0)
 }
 
+/**
+ * faire passer les valeurs entre offset et offset + 2*Math.PI pour l'animation
+ */
 function cadransNormal() {
     for (let i = 0; i < 8; i++) {
         // met les valeurs entre offset et offset + 2*Math.PI
@@ -667,4 +672,10 @@ function cadransNormal() {
         }
         resultat[i] = 0
     }
+}
+/**
+ * faire passer les valeurs entre offset et offset + 2*Math.PI pour l'animation
+ */
+function aiguillesNormal() {
+
 }

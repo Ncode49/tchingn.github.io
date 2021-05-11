@@ -498,7 +498,6 @@ function aiguillesNormal() {
             }
         }
         if (aiguilles[i].rotation.x < Math.PI / 2) {
-            console.log("inf")
             while (aiguilles[i].rotation.x < Math.PI / 2) {
                 aiguilles[i].rotation.x += 2 * Math.PI
             }

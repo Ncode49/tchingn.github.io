@@ -105,44 +105,11 @@ function initCollada() {
  */
 
 function stockeObject() {
-    console.log(childrens)
-    ecrouCentre = childrens[24];
-    ecrouCentre.rotation.x += Math.PI / 5
-    console.log(ecrouCentre.rotation.x * 180 / Math.PI)
-    objectMove.push(ecrouCentre.children[0])
-    objectMove.push(ecrouCentre.children[1])
-    objectMove.push(ecrouCentre.children[2])
-
-    for (let i = 0; i <= 7; i++) {
-        cadrans[i] = childrens[i];
-        angleInitCadrans[i] = cadrans[i].rotation.x; // angle initial
-    }
-    //console.log(cadrans)
-
-    for (let i = 12; i <= 19; i++) {
-        tirettes.push(childrens[i])
-        objectMove.push(childrens[i].children[12])
-        objectMove.push(childrens[i].children[10])
-        val_Tirettes.push(0)
-
-    }
-    //console.log(tirettes)
-    for (let i = 8; i <= 11; i++) {
-        aiguilles.push(childrens[i])
-    }
-    aiguilles.reverse();
-    initAiguilles(); // remise à zéro aiguilles et fantome
-    //console.log(aiguilles)
-    for (let i = 20; i <= 23; i++) {
-        childrens[i].rotation.x = 0
-        ecrouLaitons.push(childrens[i])
-        objectMove.push(childrens[i].children[0])
-
-    }
-    ecrouLaitons.reverse()
-        //console.log(ecrouLaitons)
-        //   console.log("object")
-    console.log(objectMove)
+    initEcrouCentre()
+    initTirettes()
+    initAiguilles();
+    initCadrans()
+    initEcrouLaitons()
 }
 
 
@@ -150,13 +117,53 @@ function stockeObject() {
  * Remet à la position initile les aiguilles
  */
 function initAiguilles() {
-    console.log("ok")
+    for (let i = 8; i <= 11; i++) {
+        aiguilles.push(childrens[i])
+    }
+    aiguilles.reverse();
+
+    // initialise valeur des aiguilles
     for (let i = 0; i < aiguilles.length; i++) {
         aiguilles[i].rotation.x = Math.PI / 2;
         fantAiguilles[i] = Math.PI / 2;
         inputCadr[i] = 0;
     }
-    console.log("valeur rotation ", aiguilles[0].rotation.x)
 }
 
+function initEcrouCentre() {
+    console.log(childrens)
+    ecrouCentre = childrens[24];
+    ecrouCentre.rotation.x += Math.PI / 5
+    console.log(ecrouCentre.rotation.x * 180 / Math.PI)
+    objectMove.push(ecrouCentre.children[0])
+    objectMove.push(ecrouCentre.children[1])
+    objectMove.push(ecrouCentre.children[2])
+}
+
+function initCadrans() {
+    for (let i = 0; i <= 7; i++) {
+        cadrans[i] = childrens[i];
+        angleInitCadrans[i] = cadrans[i].rotation.x; // angle initial
+    }
+}
+
+function initTirettes() {
+    for (let i = 12; i <= 19; i++) {
+        tirettes.push(childrens[i])
+        objectMove.push(childrens[i].children[12])
+        objectMove.push(childrens[i].children[10])
+        val_Tirettes.push(0)
+
+    }
+}
+
+function initEcrouLaitons() {
+    for (let i = 20; i <= 23; i++) {
+        childrens[i].rotation.x = 0
+        ecrouLaitons.push(childrens[i])
+        objectMove.push(childrens[i].children[0])
+
+    }
+    ecrouLaitons.reverse()
+}
 export { camera, controls, scene, renderer, objectMove, tirettes, ecrouCentre, cadrans, aiguilles, ecrouLaitons, angleInitCadrans, fantAiguilles, val_Tirettes, inputCadr, init }

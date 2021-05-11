@@ -397,7 +397,6 @@ function animeCentre() {
     if (intersection.y > ecrouCentrecoord[0])
         newAnglecentre = +Math.atan((intersection.z - ecrouCentrecoord[1]) / (intersection.y - ecrouCentrecoord[0])) - Math.PI / 2
 
-    //newAngleEcrou += Math.PI
 
 
     //console.log(etat)
@@ -407,8 +406,18 @@ function animeCentre() {
 
     // l'angle de la premiere frame est fausse, on l'enleve
     if (etat == 1) {
+        cadransNormal()
         pas = 0;
         etat = 0
+    }
+    // cadrans remise a zero
+    if (pas < 0) {
+        for (let i = 0; i < 8; i++) {
+            cadrans[i].rotation.x += pas * Math.PI * 1.2;
+            if (cadrans[i].rotation.x < angleInitCadrans[i]) {
+                cadrans[i].rotation.x = angleInitCadrans[i];
+            }
+        }
     }
     ecrouCentre.rotation.x += pas
     console.log("valeur ecrou" + ecrouCentre.rotation.x * 180 / Math.PI)
@@ -537,21 +546,10 @@ function razAiguilles() {
 }
 
 function razTotaliseur() {
+
     produit = 0;
-    for (let i = 0; i < 8; i++) {
-        // met les valeurs entre offset et offset + 2*Math.PI
-        if (cadrans[i].rotation.x > angleInitCadrans[i] + Math.PI * 2) {
-            while (cadrans[i].rotation.x > angleInitCadrans + Math.PI * 2) {
-                cadrans[i].rotation.x -= 2 * Math.PI
-            }
-        }
-        if (cadrans[i].rotation.x < angleInitCadrans[i]) {
-            while (cadrans[i].rotation.x < angleInitCadrans) {
-                cadrans[i].rotation.x += 2 * Math.PI
-            }
-        }
-        resultat[i] = 0
-    }
+
+    cadransNormal()
     animeRAZ();
 
     console.log('RAZ produit');
@@ -652,4 +650,21 @@ function faceVue() {
 
 function faceDessus() {
     vueChange(15, 14, 0, 0, 1, 0)
+}
+
+function cadransNormal() {
+    for (let i = 0; i < 8; i++) {
+        // met les valeurs entre offset et offset + 2*Math.PI
+        if (cadrans[i].rotation.x > angleInitCadrans[i] + Math.PI * 2) {
+            while (cadrans[i].rotation.x > angleInitCadrans + Math.PI * 2) {
+                cadrans[i].rotation.x -= 2 * Math.PI
+            }
+        }
+        if (cadrans[i].rotation.x < angleInitCadrans[i]) {
+            while (cadrans[i].rotation.x < angleInitCadrans) {
+                cadrans[i].rotation.x += 2 * Math.PI
+            }
+        }
+        resultat[i] = 0
+    }
 }

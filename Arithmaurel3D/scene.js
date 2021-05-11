@@ -1,31 +1,26 @@
 import * as THREE from './lib/three.module.js';
-import { ColladaLoader } from './lib/ColladaLoader.js';
 import { affichCadran } from './affichageBouton.js'
 import { BruitBouton } from './sound.js'
-import { camera, controls, scene, renderer, initScene } from './initScene.js'
+import { camera, controls, tirettes, val_Tirettes, angleInitCadrans, scene, renderer, objectMove, ecrouCentre, cadrans, aiguilles, ecrouLaitons, fantAiguilles, inputCadr, init } from './initScene.js'
 import { faceDessus, faceVue } from './vueChangement.js'
 
 const mouse = new THREE.Vector2();
 
-var ecrouCentre;
-var childrens = [];
+
 // stocke les états
-var aiguilles = [];
-var fantAiguilles = new Array(4); // fantomes aiguilles
+
+
 var seuil = Math.PI / 50; // valeur arbitraire
 var pente = 2.9 * (Math.PI / 9) / (1 - (2 * seuil) / (Math.PI / 9)); // pente de (seuil, 0) à (PI/9 - seuil, PI/9)
 // le 2.9 est pragmatique et non scientifique. Je ne sais pas d'où il vient.
-var cadrans = new Array(8); // cadrans d'affichage des résultats
-var angleInitCadrans = new Array(8); // angle initial du cadran qui affiche 0
+
 var resultat = [0, 0, 0, 0, 0, 0, 0, 0, 0]; // valeur numérique des cadrans et retenue sortante
-var ecrouLaitons = [];
-var tirettes = [];
-var val_Tirettes = [];
+
+
 var multiplicande = 0; // valeur des tirettes
 var produit = 0; //  produit de la multiplication
 var last_Tirette = -1;
-// stocke les objets mobiles
-var objectMove = [];
+
 // boleen pour l'etat de la souris qui est soit enfoncée ou non
 var down = 0;
 var animeReturnZ;
@@ -44,10 +39,8 @@ var nbanimationsRZ = 80;
 var nbanimationsRZaig = 90;
 var animeReturnZero;
 
-// positionnement pour changement de vue
 var intersection = new THREE.Vector3();
 // variable pour le changement d'état affiché
-var inputCadr = [0, 0, 0, 0]; // entrée cadrans
 
 
 // variable positionnnement des aiguilles et ecrous
@@ -88,106 +81,8 @@ function ok() {
     console.log("ok")
 }
 
-function init() {
 
 
-    initScene();
-
-    // helper The X axis is red. The Y axis is green. The Z axis is blue.
-    // const axesHelper = new THREE.AxesHelper(10);
-    // scene.add(axesHelper);
-    // const helper = new THREE.PlaneHelper(planeFace, 20, 0xffff00);
-    // scene.add(helper);
-
-    // instantiate a loader
-    var loader = new ColladaLoader();
-    // instancie l'arithmaurel et l'affiche a l'écran
-    loader.load('modeles_3D/arithmaurel.dae',
-
-        // Function when resource is loaded
-
-        function(collada) {
-
-            // affichage de la scene
-            childrens = collada.scene.children;
-            scene.add(collada.scene);
-            //console.log(collada.scene.children)
-            // recuperations des elements
-            stockeObject();
-        },
-
-        // Function called when download progresses
-        function(xhr) {
-            console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-        }
-    );
-    // charger et positionner les autres éléments en dupliquant le code précédent
-
-    // Lumiere
-    let light = new THREE.DirectionalLight(0xffffff, 0.2);
-    light.position.set(1, 1, 0);
-    scene.add(light);
-    var lightAmb = new THREE.AmbientLight(0xffffff)
-    scene.add(lightAmb)
-
-    window.addEventListener('resize', onWindowResize, false);
-}
-
-
-
-/**
- * fonction qui initialise les objets mobiles
- * objectMove contient la liste des objets mobiles et interactifs (utilse pour detecter quand la souris clique sur un de ces elements)
- * on initialise en meme temps les etats des objets en mémoire
- */
-
-function stockeObject() {
-    console.log(childrens)
-    ecrouCentre = childrens[24];
-    ecrouCentre.rotation.x += Math.PI / 5
-    console.log(ecrouCentre.rotation.x * 180 / Math.PI)
-    objectMove.push(ecrouCentre.children[0])
-    objectMove.push(ecrouCentre.children[1])
-    objectMove.push(ecrouCentre.children[2])
-
-    for (let i = 0; i <= 7; i++) {
-        cadrans[i] = childrens[i];
-        angleInitCadrans[i] = cadrans[i].rotation.x; // angle initial
-    }
-    //console.log(cadrans)
-
-    for (let i = 12; i <= 19; i++) {
-        tirettes.push(childrens[i])
-        objectMove.push(childrens[i].children[12])
-        objectMove.push(childrens[i].children[10])
-        val_Tirettes.push(0)
-
-    }
-    //console.log(tirettes)
-    for (let i = 8; i <= 11; i++) {
-        aiguilles.push(childrens[i])
-    }
-    aiguilles.reverse();
-    initAiguilles(); // remise à zéro aiguilles et fantome
-    //console.log(aiguilles)
-    for (let i = 20; i <= 23; i++) {
-        childrens[i].rotation.x = 0
-        ecrouLaitons.push(childrens[i])
-        objectMove.push(childrens[i].children[0])
-
-    }
-    ecrouLaitons.reverse()
-        //console.log(ecrouLaitons)
-
-    //   console.log("object")
-    // console.log(objectMove)
-}
-
-function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-}
 
 
 
@@ -494,19 +389,7 @@ function calcResult(numero, increment) {
 }
 
 
-/**
- * Remet à la position initile les aiguilles
- */
-function initAiguilles() {
-    console.log("ok")
-    for (let i = 0; i < aiguilles.length; i++) {
-        aiguilles[i].rotation.x = Math.PI / 2;
-        fantAiguilles[i] = Math.PI / 2;
-        inputCadr[i] = 0;
-    }
-    console.log("valeur rotation ", aiguilles[0].rotation.x)
-    affichCadran(inputCadr);
-}
+
 
 function razAiguilles() {
     aiguillesNormal()

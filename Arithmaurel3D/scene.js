@@ -1,12 +1,12 @@
 import * as THREE from './lib/three.module.js';
-import { OrbitControls } from './lib/OrbitControls.js';
 import { ColladaLoader } from './lib/ColladaLoader.js';
+import { affichCadran } from './affichageBouton.js'
+import { BruitBouton } from './sound.js'
+import { camera, controls, scene, renderer, initScene } from './initScene.js'
+import { faceDessus, faceVue } from './vueChangement.js'
 
-var camera, controls, scene, renderer;
 const mouse = new THREE.Vector2();
-var BruitBouton = new Audio('sounds/Calculateur_mecanique.mp3');
-BruitBouton.preload = 'auto';
-BruitBouton.loop = false;
+
 var ecrouCentre;
 var childrens = [];
 // stocke les états
@@ -43,12 +43,8 @@ var raycaster = new THREE.Raycaster();
 var nbanimationsRZ = 80;
 var nbanimationsRZaig = 90;
 var animeReturnZero;
-var animvueChangeProg;
-
 
 // positionnement pour changement de vue
-var dPosX, dPosY, dPosZ, dUpX, dUpY, dUpZ, pasChange;
-var pasChange;
 var intersection = new THREE.Vector3();
 // variable pour le changement d'état affiché
 var inputCadr = [0, 0, 0, 0]; // entrée cadrans
@@ -56,7 +52,6 @@ var inputCadr = [0, 0, 0, 0]; // entrée cadrans
 
 // variable positionnnement des aiguilles et ecrous
 var oldAngleEcrou, newAngleEcrou;
-var oldChiffreMult, newChiffreMult;
 var oldAngleCentre, newAnglecentre;
 var etat = 0;
 init();
@@ -66,7 +61,6 @@ animate();
 renderer.domElement.addEventListener('mousemove', onDocumentMouseMove, false);
 renderer.domElement.addEventListener('mousedown', onDocumentMouseDown, false);
 renderer.domElement.addEventListener('mouseup', onDocumentMouseUp, false);
-BruitBouton.addEventListener('ended', function(e) { BruitBouton.currentTime = 0.2 }, false);
 
 // Boutons
 const RAZaiguilles = document.getElementById("RAZaiguilles");
@@ -96,26 +90,8 @@ function ok() {
 
 function init() {
 
-    // Scene
-    scene = new THREE.Scene();
-    // Rendu sur la page
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
 
-    //Camera
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000);
-    camera.position.set(25, 10, 0);
-
-    // Controles
-    controls = new OrbitControls(camera, renderer.domElement);
-    //controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-    // controls.dampingFactor = 0.05;
-    controls.screenSpacePanning = false;
-    controls.minDistance = 5;
-    controls.maxDistance = 30;
-
+    initScene();
 
     // helper The X axis is red. The Y axis is green. The Z axis is blue.
     // const axesHelper = new THREE.AxesHelper(10);
@@ -272,23 +248,14 @@ function onDocumentMouseUp(event) {
     evenement = null;
     down = 0;
     document.body.style.cursor = 'auto';
-    //discretisationTirette();
-
-
     controls.enabled = true;
 }
 
 /**
- *  fonction de traitement de l'evenement lorsque le click est enfoncée
- * @param {*} event
+ * fonction de traitement quand on enfonce le bouton de la souris
  */
 function onDocumentMouseDown(event) {
-    //event.preventDefault()
     down = 1;
-    //   console.log("down")
-    // recupere position de la souris quand on bouge
-    //  MoldX = (event.clientX / window.innerWidth) * 2 - 1;
-    // MoldY = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
     // stoppe le controle sur les deplacements pour pouvoir bouger l'objet
 
@@ -305,7 +272,6 @@ function onDocumentMouseDown(event) {
         // nom de l'objet selectionnée
         evenement = intersects[0].object.parent.name;
         etat = 1;
-
         switch (evenement[0]) {
             case 'R':
                 BruitBouton.play()
@@ -325,14 +291,7 @@ function onDocumentMouseDown(event) {
                 document.body.style.cursor = 'ns-resize';
                 break;
         }
-
-
-
-        //  console.log(evenement)
     }
-
-    // on stoppe le control pour la position de l'arithmmaurel
-    // controls.enabled = false;
 }
 
 /**
@@ -433,7 +392,6 @@ function animeCentre() {
         }
     }
     ecrouCentre.rotation.x += pas
-    console.log("valeur ecrou" + ecrouCentre.rotation.x * 180 / Math.PI)
     oldAngleCentre = newAnglecentre
     if (ecrouCentre.rotation.x * 180 / Math.PI > 216) {
         ecrouCentre.rotation.x = 215.999999999 * Math.PI / 180
@@ -469,19 +427,12 @@ function animeEcrou() {
     raycaster.setFromCamera(mouse, camera);
     // calcul intersection souris plan => intersection
     raycaster.ray.intersectPlane(planeFace, intersection);
-    // console.log(intersection)
-    // coordonnees de l'intersection pour le premier cadran
-    // va de 0 a 360 degre dans le sens antihoraire pas encore bon en réglage
     // mettre 2 if
     if (intersection.z <= coord[numero][1]) {
         newAngleEcrou = -Math.atan((intersection.y - coord[numero][0]) / (intersection.z - coord[numero][1])) + 3 * Math.PI / 2
     } else {
         newAngleEcrou = -Math.atan((intersection.y - coord[numero][0]) / (intersection.z - coord[numero][1])) + Math.PI / 2
     }
-    //newAngleEcrou += Math.PI
-
-    //console.log(etat)
-    //console.log("nouvel angle " + newAngleEcrou * 180 / Math.PI)
     pas = newAngleEcrou - oldAngleEcrou;
     if (etat == 1) {
         pas = 0
@@ -489,9 +440,6 @@ function animeEcrou() {
     }
 
     ecrou.rotation.x += pas;
-    // if (Math.abs(pas) > 0.1 ) { BruitBouton.play()} ;
-
-
     console.log("pas = " + pas);
 
     if (pas > Math.PI) {
@@ -516,7 +464,7 @@ function animeEcrou() {
 
     if (Math.abs(inputCadr[numero].toFixed(2)) % 1 < 0.001) { inputCadr[numero] = Math.round(inputCadr[numero]) }; // entier
     calcResult(numero, inputCadr[numero] - oldInputCadr);
-    affichCadran(); // valeurs numériques des cadrans
+    affichCadran(inputCadr); // valeurs numériques des cadrans
 
     oldAngleEcrou = newAngleEcrou;
 }
@@ -557,7 +505,7 @@ function initAiguilles() {
         inputCadr[i] = 0;
     }
     console.log("valeur rotation ", aiguilles[0].rotation.x)
-    affichCadran();
+    affichCadran(inputCadr);
 }
 
 function razAiguilles() {
@@ -568,7 +516,7 @@ function razAiguilles() {
         fantAiguilles[i] = Math.PI / 2;
         inputCadr[i] = 0;
     }
-    affichCadran();
+    affichCadran(inputCadr);
 
 }
 
@@ -633,50 +581,7 @@ function affichTirette() {
     }
 }
 
-function affichCadran() {
-    document.getElementById('cadran').innerHTML = '&nbsp;';
-    for (let i = 3; i >= 0; i--) {
-        document.getElementById('cadran').innerHTML += (Number.isInteger(inputCadr[i]) ? inputCadr[i] : inputCadr[i].toFixed(2)) + '&nbsp;'
-    }
-}
 
-function vueChange(posX, posY, posZ, upX, upY, upZ) {
-    // console.log (camera.rotation.x, camera.rotation.y, camera.rotation.z )
-    pasChange = 16;
-    // verifier ici que la distance n'est pas trop importante
-    dPosX = (camera.position.x - posX) / pasChange;
-    dPosY = (camera.position.y - posY) / pasChange;
-    dPosZ = (camera.position.z - posZ) / pasChange;
-    dUpX = (camera.up.x - upX) / pasChange;
-    dUpY = (camera.up.y - upY) / pasChange;
-    dUpZ = (camera.up.z - upZ) / pasChange;
-    vueChangeProg();
-}
-
-function vueChangeProg() {
-    animvueChangeProg = requestAnimationFrame(vueChangeProg);
-    if (pasChange > 0) {
-        camera.position.x -= dPosX;
-        camera.position.y -= dPosY;
-        camera.position.z -= dPosZ; // rotation
-        camera.up.x -= dUpX;
-        camera.up.y -= dUpY;
-        camera.up.z -= dUpZ; // uniquement pivotement de la camÃ©ra
-        pasChange--;
-    } else {
-        //controls = new THREE.TrackballControls(camera);
-        camera.lookAt(scene.position);
-        window.cancelAnimationFrame(animvueChangeProg);
-    }
-}
-// 3 premier arguments posX, posY, posZ
-function faceVue() {
-    vueChange(20, 0, 0, 0, 1, 0)
-}
-
-function faceDessus() {
-    vueChange(15, 14, 0, 0, 1, 0)
-}
 
 /**
  * faire passer les valeurs entre offset et offset + 2*Math.PI pour l'animation

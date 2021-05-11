@@ -347,10 +347,10 @@ function animeRazTot() {
     if (nbanimationsRZ == 0) {
         console.log("fini")
         nbanimationsRZ = 80;
+
+        window.cancelAnimationFrame(animeReturnZero);
         BruitBouton.pause()
         BruitBouton.currentTime = 0
-        window.cancelAnimationFrame(animeReturnZero);
-
     }
 }
 
@@ -566,6 +566,7 @@ function razTotaliseur() {
     BruitBouton.play()
     animeRazTot();
     console.log('RAZ produit');
+
 }
 
 

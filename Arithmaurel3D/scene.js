@@ -228,11 +228,6 @@ function animeCentre() {
     if (intersection.y > ecrouCentrecoord[0])
         newAnglecentre = +Math.atan((intersection.z - ecrouCentrecoord[1]) / (intersection.y - ecrouCentrecoord[0])) - Math.PI / 2
 
-
-
-    //console.log(etat)
-    //console.log("nouvel angle " + newAngleEcrou * 180 / Math.PI)
-
     pas = newAnglecentre - oldAngleCentre;
 
     // l'angle de la premiere frame est fausse, on l'enleve

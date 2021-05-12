@@ -11,7 +11,7 @@ function aiguillesNormal(aiguilles) {
     for (let i = 0; i < 4; i++) {
         console.log(aiguilles[i].rotation.x)
             // met les valeurs entre offset et offset + 2*Math.PI
-        if (aiguilles[i].rotation.x > Math.PI / 2 + Math.PI * 2) {
+        if (aiguilles[i].rotation.x > Math.PI / 2 + 2 * Math.PI) {
             while (aiguilles[i].rotation.x > Math.PI / 2 + Math.PI * 2) {
                 aiguilles[i].rotation.x -= 2 * Math.PI
             }
@@ -21,6 +21,8 @@ function aiguillesNormal(aiguilles) {
                 aiguilles[i].rotation.x += 2 * Math.PI
             }
         }
+        console.log(aiguilles[i].rotation.x)
+
     }
 }
 
@@ -41,16 +43,26 @@ function animeRazAig() {
     nbanimationsRZaig--;
     // console.log(nbanimationsRZaig)
     animeReturnZ = requestAnimationFrame(animeRazAig)
-    if (nbanimationsRZaig % 5 == 0) {
+    if (nbanimationsRZaig % 10 == 0) {
         for (let i = 0; i <= 3; i++) {
             console.log(aiguilles[i].rotation.x)
-            if (aiguilles[i].rotation.x < Math.PI / 2) {
-                aiguilles[i].rotation.x = Math.PI / 2
+
+            // cas tourner sens horaire
+            if (aiguilles[i].rotation.x < 3 * Math.PI / 2) {
+                if (aiguilles[i].rotation.x > Math.PI / 2 + Math.PI / 9) {
+                    aiguilles[i].rotation.x -= Math.PI / 9;
+                } else {
+                    aiguilles[i].rotation.x = Math.PI / 2
+                }
+
             }
-            if (aiguilles[i].rotation.x > Math.PI / 2 + Math.PI / 9) {
-                aiguilles[i].rotation.x -= Math.PI / 9;
-            } else {
-                aiguilles[i].rotation.x = Math.PI / 2
+            // cas tourner sens antihoraire 
+            else {
+                if (aiguilles[i].rotation.x > Math.PI / 2 + 2 * Math.PI - Math.PI / 9) {
+                    aiguilles[i].rotation.x = Math.PI / 2
+                } else {
+                    aiguilles[i].rotation.x += Math.PI / 9;
+                }
             }
         }
 

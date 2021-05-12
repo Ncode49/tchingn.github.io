@@ -21,7 +21,7 @@ function aiguillesNormal(aiguilles) {
                 aiguilles[i].rotation.x += 2 * Math.PI
             }
         }
-        console.log(aiguilles[i].rotation.x)
+        // console.log(aiguilles[i].rotation.x)
 
     }
 }

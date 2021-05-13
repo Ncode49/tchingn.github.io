@@ -289,6 +289,7 @@ function animeEcrou() {
     // calcul intersection souris plan => intersection
     raycaster.ray.intersectPlane(planeFace, intersection);
     // mettre 2 if
+    console.log("intersection")
     if (intersection.z <= coord[numero][1]) {
         newAngleEcrou = -Math.atan((intersection.y - coord[numero][0]) / (intersection.z - coord[numero][1])) + 3 * Math.PI / 2
     } else {

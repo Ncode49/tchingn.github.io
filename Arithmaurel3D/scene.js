@@ -43,6 +43,7 @@ var intersection = new THREE.Vector3();
 var oldAngleEcrou, newAngleEcrou;
 var oldAngleCentre, newAnglecentre;
 var etat = 0;
+var raz, etatraz = false;
 init();
 animate();
 
@@ -141,7 +142,7 @@ function onDocumentMouseUp(event) {
     down = 0;
     document.body.style.cursor = 'auto';
     controls.enabled = true;
-    // razCentreRelache()
+    razCentreRelache()
 }
 
 /**
@@ -279,7 +280,7 @@ function animeCentre() {
 // pas negatif => sens decroissant
 // pas positid => sens croissant
 // seuil a 1 passe de 5.01 a 6 ou 4.99 a 4
-// passe de mainiere discrete pour l'instant
+// passe de mainiere discrete 
 function razCadr(seuil) {
     // entre 5 et 6
     for (let i = 0; i < 8; i++) {
@@ -449,7 +450,15 @@ function affichTirette() {
 }
 
 function razCentreRelache() {
-    while (ecrouCentre.rotation.x * 180 / Math.PI > 138.0001) {
+    raz = setInterval(decrement, 100)
+}
+
+function decrement() {
+    ecrouCentre.rotation.x += Math.PI / 50
+    console.log(ecrouCentre.rotation.x * 180 / Math.PI)
+    if (ecrouCentre.rotation.x * 180 / Math.PI > 216) {
+        ecrouCentre.rotation.x = 216 * Math.PI / 180
+        clearInterval(raz)
 
     }
 }

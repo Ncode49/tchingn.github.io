@@ -96,7 +96,9 @@ function initCollada() {
 
         // Function called when download progresses
         function(xhr) {
+            document.getElementById('progression').value = xhr.loaded / xhr.total * 100;
             console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+            if (xhr.loaded == xhr.total) { document.body.removeChild(document.getElementById('progression')); }
         }
     );
 }

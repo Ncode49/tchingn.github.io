@@ -67,3 +67,15 @@ button:hover {
     display: flex;
     cursor: pointer;
 }
+
+#progression {
+    position: absolute;
+    z-index: -1;
+    top: 30vw;
+    right: 40vw;
+    width: 20vw;
+    height: 1.5vw;
+    border: 1px outset #656565;
+    box-shadow: 5px 5px 10px #343434;
+    font-size: 1.2vw;
+}

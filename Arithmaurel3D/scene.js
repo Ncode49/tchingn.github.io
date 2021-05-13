@@ -135,14 +135,15 @@ function onDocumentMouseMove(event) {
  */
 function onDocumentMouseUp(event) {
     discretisationTirette()
-        //event.preventDefault()
+    razCentreRelache()
+
+    //event.preventDefault()
     BruitBouton.pause()
     BruitBouton.currentTime = 0
     evenement = null;
     down = 0;
     document.body.style.cursor = 'auto';
     controls.enabled = true;
-    razCentreRelache()
 }
 
 /**

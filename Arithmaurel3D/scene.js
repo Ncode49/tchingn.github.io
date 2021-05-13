@@ -141,6 +141,7 @@ function onDocumentMouseUp(event) {
     down = 0;
     document.body.style.cursor = 'auto';
     controls.enabled = true;
+    // razCentreRelache()
 }
 
 /**
@@ -213,6 +214,7 @@ function animeTirette() {
 
 }
 
+
 var ecrouCentrecoord = []
 ecrouCentrecoord.push(0.18312431445661992)
 ecrouCentrecoord.push(-0.18312431445662275)
@@ -222,9 +224,8 @@ function animeCentre() {
     raycaster.setFromCamera(mouse, camera);
     // calcul intersection souris plan => intersection
     raycaster.ray.intersectPlane(planeFace, intersection);
-    console.log("zintersection" + intersection.z)
-    console.log("yintersection" + intersection.y)
-    console.log(intersection.y)
+    //console.log("zintersection" + intersection.z)
+    //console.log("yintersection" + intersection.y)
     if (intersection.y > ecrouCentrecoord[0])
         newAnglecentre = +Math.atan((intersection.z - ecrouCentrecoord[1]) / (intersection.y - ecrouCentrecoord[0])) - Math.PI / 2
 
@@ -236,15 +237,33 @@ function animeCentre() {
         pas = 0;
         etat = 0
     }
-    // cadrans remise a zero
+    // cadrans remise a zero a la fin, revient a la position initiale
+    // si on decale vers la droite va de 216 a 138
+
     if (pas < 0) {
-        for (let i = 0; i < 8; i++) {
-            cadrans[i].rotation.x += pas * Math.PI * 1.2;
-            if (cadrans[i].rotation.x < angleInitCadrans[i]) {
-                cadrans[i].rotation.x = angleInitCadrans[i];
-            }
+        if (ecrouCentre.rotation.x * 180 / Math.PI > 203) {
+            console.log("sup 203")
+        } else if (ecrouCentre.rotation.x * 180 / Math.PI > 190) {
+            console.log("zone a 5")
+            razCadr(5)
+        } else if (ecrouCentre.rotation.x * 180 / Math.PI > 177) {
+            console.log("zone a 4")
+            razCadr(4)
+        } else if (ecrouCentre.rotation.x * 180 / Math.PI > 164) {
+            console.log("zone a 3")
+            razCadr(3)
+        } else if (ecrouCentre.rotation.x * 180 / Math.PI > 151) {
+            razCadr(2)
+            console.log("zone a 2")
+        } else if (ecrouCentre.rotation.x * 180 / Math.PI > 139) {
+            razCadr(1)
+            console.log("zone a 1")
         }
     }
+
+    // va de 216 a 138 degres
+    // pas negatidf donc tourne sens horaire gauche droite 9 -> 0
+    //  console.log("valeur angle centre: " + ecrouCentre.rotation.x * 180 / Math.PI)
     ecrouCentre.rotation.x += pas
     oldAngleCentre = newAnglecentre
     if (ecrouCentre.rotation.x * 180 / Math.PI > 216) {
@@ -253,6 +272,30 @@ function animeCentre() {
     if (ecrouCentre.rotation.x * 180 / Math.PI < 138) {
         ecrouCentre.rotation.x = 138.0001 * Math.PI / 180
     }
+}
+
+
+// seuil prend la valeur 5, 4, 3, 2, 1, 0 en fonction de la zone
+// pas negatif => sens decroissant
+// pas positid => sens croissant
+// seuil a 1 passe de 5.01 a 6 ou 4.99 a 4
+// passe de mainiere discrete pour l'instant
+function razCadr(seuil) {
+    // entre 5 et 6
+    for (let i = 0; i < 8; i++) {
+        if ((cadrans[i].rotation.x > (2 * Math.PI / 10) * (seuil - 1) + angleInitCadrans[i]) &&
+            (cadrans[i].rotation.x <= (2 * Math.PI / 10) * seuil + angleInitCadrans[i])) {
+            console.log("entre " + (seuil - 1) + " et " + (seuil) + " on met a " + (seuil - 1))
+            cadrans[i].rotation.x = (2 * Math.PI / 10) * (seuil - 1) + angleInitCadrans[i]
+        } else if ((cadrans[i].rotation.x >= (2 * Math.PI / 10) * (10 - seuil) + angleInitCadrans[i]) &&
+            (cadrans[i].rotation.x < (2 * Math.PI / 10) * (10 - seuil + 1) + angleInitCadrans[i])) {
+            console.log("entre " + (10 - seuil) + " et " + (10 - seuil + 1) + " on met a " + (10 - seuil + 1))
+            cadrans[i].rotation.x = (2 * Math.PI / 10) * (10 - seuil + 1) + angleInitCadrans[i]
+        }
+    }
+
+    // console.log((cadrans[0].rotation.x - angleInitCadrans[0]) * 180 / Math.PI)
+
 }
 
 // coordonnees centres écrous
@@ -294,7 +337,7 @@ function animeEcrou() {
     }
 
     ecrou.rotation.x += pas;
-    console.log("pas = " + pas);
+    //console.log("pas = " + pas);
 
     if (pas > Math.PI) {
         pas -= Math.PI;
@@ -329,7 +372,7 @@ function animeEcrou() {
  */
 function calcResult(numero, increment) {
     produit += multiplicande * increment * Math.pow(10, numero);
-    console.log('numero = ' + numero + ' increment = ' + increment + ' produit = ' + produit.toFixed(4));
+    //console.log('numero = ' + numero + ' increment = ' + increment + ' produit = ' + produit.toFixed(4));
 
     var retenue = 0; // pour le passage progressif de 9 à 0 ou de 0 à 9
     for (var i = numero; i < 8; i++) {
@@ -402,5 +445,11 @@ function affichTirette() {
     for (let i = 7; i >= 0; i--) {
         document.getElementById('tirette').innerHTML += val_Tirettes[i] + '&nbsp;'
         multiplicande = 10 * multiplicande + val_Tirettes[i];
+    }
+}
+
+function razCentreRelache() {
+    while (ecrouCentre.rotation.x * 180 / Math.PI > 138.0001) {
+
     }
 }

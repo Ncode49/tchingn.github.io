@@ -1,7 +1,6 @@
 import { cadrans, angleInitCadrans, ecrouCentre, renderer, scene, camera } from './initScene.js'
 import { BruitBouton } from './sound.js'
-var nbanimationsRZ = 80;
-var seuil = 5;
+var nbanimationsRZ = 160;
 var animeReturnZero;
 
 function razTotaliseur() {
@@ -12,18 +11,7 @@ function razTotaliseur() {
 
 }
 
-function calculSeuil(seuil) {
-    console.log(seuil)
-    for (let i = 0; i < 8; i++) {
-        // si le cadran <= 5
-        if (cadrans[i].rotation.x)
-        // si le cadran > 5
-            cadrans[i].rotation.x -= Math.PI / 10;
-        if (cadrans[i].rotation.x < angleInitCadrans[i]) {
-            cadrans[i].rotation.x = angleInitCadrans[i];
-        }
-    }
-}
+
 /**
  * faire passer les valeurs entre offset et offset + 2*Math.PI pour l'animation
  * un pas correspond à Math.PI/9
@@ -57,22 +45,13 @@ function animeRazTot() {
     nbanimationsRZ--
     animeReturnZero = requestAnimationFrame(animeRazTot);
     // partie gauche-droite passe de 80 a 40, seuil pour les frames 74, 68, 62, 56, 50, 44
-    if (nbanimationsRZ >= 40) {
-        ecrouCentre.rotation.x -= Math.PI / 100;
-        if (nbanimationsRZ % 6 == 2) {
-            calculSeuil(seuil)
-            seuil--
-        }
-        for (let i = 0; i < 8; i++) {
-            cadrans[i].rotation.x -= Math.PI / 10;
-            if (cadrans[i].rotation.x < angleInitCadrans[i]) {
-                cadrans[i].rotation.x = angleInitCadrans[i];
-            }
-        }
+    if (nbanimationsRZ >= 80) {
+        ecrouCentre.rotation.x -= Math.PI / 200;
+        majPosCadran()
     }
     // partie droite gauche passe de 40 a 0
     else {
-        ecrouCentre.rotation.x += Math.PI / 100;
+        ecrouCentre.rotation.x += Math.PI / 200;
     }
     // objectParent.parent.rotation.x -= Math.PI/50;
 
@@ -80,12 +59,55 @@ function animeRazTot() {
 
     if (nbanimationsRZ == 0) {
         console.log("fini")
-        nbanimationsRZ = 80;
-        seuil = 5;
+        nbanimationsRZ = 160;
         window.cancelAnimationFrame(animeReturnZero);
         BruitBouton.pause()
         BruitBouton.currentTime = 0
     }
 }
 
-export { cadransNormal, razTotaliseur }
+
+// seuil prend la valeur 5, 4, 3, 2, 1, 0 en fonction de la zone
+// pas negatif => sens decroissant
+// pas positid => sens croissant
+// seuil a 1 passe de 5.01 a 6 ou 4.99 a 4
+// passe de mainiere discrete 
+function razCadr(seuil) {
+    // entre 5 et 6
+    for (let i = 0; i < 8; i++) {
+        if ((cadrans[i].rotation.x > (2 * Math.PI / 10) * (seuil - 1) + angleInitCadrans[i]) &&
+            (cadrans[i].rotation.x <= (2 * Math.PI / 10) * seuil + angleInitCadrans[i])) {
+            console.log("entre " + (seuil - 1) + " et " + (seuil) + " on met a " + (seuil - 1))
+            cadrans[i].rotation.x = (2 * Math.PI / 10) * (seuil - 1) + angleInitCadrans[i]
+        } else if ((cadrans[i].rotation.x >= (2 * Math.PI / 10) * (10 - seuil) + angleInitCadrans[i]) &&
+            (cadrans[i].rotation.x < (2 * Math.PI / 10) * (10 - seuil + 1) + angleInitCadrans[i])) {
+            console.log("entre " + (10 - seuil) + " et " + (10 - seuil + 1) + " on met a " + (10 - seuil + 1))
+            cadrans[i].rotation.x = (2 * Math.PI / 10) * (10 - seuil + 1) + angleInitCadrans[i]
+        }
+    }
+
+    // console.log((cadrans[0].rotation.x - angleInitCadrans[0]) * 180 / Math.PI)
+
+}
+
+function majPosCadran() {
+    if (ecrouCentre.rotation.x * 180 / Math.PI > 203) {
+        console.log("sup 203")
+    } else if (ecrouCentre.rotation.x * 180 / Math.PI > 190) {
+        console.log("zone a 5")
+        razCadr(5)
+    } else if (ecrouCentre.rotation.x * 180 / Math.PI > 177) {
+        console.log("zone a 4")
+        razCadr(4)
+    } else if (ecrouCentre.rotation.x * 180 / Math.PI > 164) {
+        console.log("zone a 3")
+        razCadr(3)
+    } else if (ecrouCentre.rotation.x * 180 / Math.PI > 151) {
+        razCadr(2)
+        console.log("zone a 2")
+    } else if (ecrouCentre.rotation.x * 180 / Math.PI > 139) {
+        razCadr(1)
+        console.log("zone a 1")
+    }
+}
+export { cadransNormal, razTotaliseur, majPosCadran }

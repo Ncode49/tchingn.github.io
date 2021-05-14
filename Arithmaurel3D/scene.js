@@ -355,7 +355,16 @@ function animeTirette() {
         tirette.position.x = 8.79999
     }
     last_Tirette = numero
+    discretisationTiretteC()
+}
 
+function discretisationTiretteC() {
+    let tirette = tirettes[last_Tirette]
+    if (tirette.position.x >= 6.5) {
+        val_Tirettes[last_Tirette] = (tirette.position.x - 6.5) * 4
+        val_Tirettes[last_Tirette] = val_Tirettes[last_Tirette].toFixed(2)
+    }
+    affichTirette()
 }
 
 function discretisationTirette() {

@@ -361,47 +361,48 @@ function animeTirette() {
 function discretisationTiretteC() {
     let tirette = tirettes[last_Tirette]
     if (tirette.position.x >= 6.5) {
-        val_Tirettes[last_Tirette] = (tirette.position.x - 6.5) * 4
+        val_Tirettes[last_Tirette] = (tirette.position.x - 6.5) * 3.92
         val_Tirettes[last_Tirette] = val_Tirettes[last_Tirette].toFixed(2)
     }
     affichTirette()
 }
 
 function discretisationTirette() {
+    // difference de 0.1255
     if (last_Tirette > -1) {
         let tirette = tirettes[last_Tirette]
         if (tirette.position.x < 6.20) {
             tirette.position.x = 6.1
             val_Tirettes[last_Tirette] = 0
-        } else if (tirette.position.x > 6.20 && tirette.position.x < 6.625) {
+        } else if (tirette.position.x > 6.20 && tirette.position.x < 6.6275) {
             tirette.position.x = 6.5
             val_Tirettes[last_Tirette] = 0
-        } else if (tirette.position.x >= 6.625 && tirette.position.x < 6.825) {
-            tirette.position.x = 6.75
+        } else if (tirette.position.x >= 6.6275 && tirette.position.x < 6.8825) {
+            tirette.position.x = 6.755
             val_Tirettes[last_Tirette] = 1
-        } else if (tirette.position.x >= 6.825 && tirette.position.x < 7.125) {
-            tirette.position.x = 7
+        } else if (tirette.position.x >= 6.8825 && tirette.position.x < 7.1375) {
+            tirette.position.x = 7.01
             val_Tirettes[last_Tirette] = 2
-        } else if (tirette.position.x >= 7.125 && tirette.position.x < 7.375) {
-            tirette.position.x = 7.25
+        } else if (tirette.position.x >= 7.1375 && tirette.position.x < 7.3925) {
+            tirette.position.x = 7.265
             val_Tirettes[last_Tirette] = 3
-        } else if (tirette.position.x >= 7.375 && tirette.position.x < 7.625) {
-            tirette.position.x = 7.5
+        } else if (tirette.position.x >= 7.3925 && tirette.position.x < (7.52 + 7.775) / 2) {
+            tirette.position.x = 7.52
             val_Tirettes[last_Tirette] = 4
-        } else if (tirette.position.x >= 7.625 && tirette.position.x < 7.825) {
-            tirette.position.x = 7.75
+        } else if (tirette.position.x >= (7.52 + 7.775) / 2 && tirette.position.x < (7.775 + 8.03) / 2) {
+            tirette.position.x = 7.775
             val_Tirettes[last_Tirette] = 5
-        } else if (tirette.position.x >= 7.825 && tirette.position.x < 8.125) {
-            tirette.position.x = 8
+        } else if (tirette.position.x >= (7.775 + 8.03) / 2 && tirette.position.x < (8.03 + 8.285) / 2) {
+            tirette.position.x = 8.03
             val_Tirettes[last_Tirette] = 6
-        } else if (tirette.position.x >= 8.125 && tirette.position.x < 8.375) {
-            tirette.position.x = 8.25
+        } else if (tirette.position.x >= (8.03 + 8.285) / 2 && tirette.position.x < (8.54 + 8.285) / 2) {
+            tirette.position.x = 8.285
             val_Tirettes[last_Tirette] = 7
-        } else if (tirette.position.x >= 8.375 && tirette.position.x < 8.625) {
-            tirette.position.x = 8.50
+        } else if (tirette.position.x >= (8.54 + 8.285) / 2 && tirette.position.x < (8.54 + 8.795) / 2) {
+            tirette.position.x = 8.54
             val_Tirettes[last_Tirette] = 8
-        } else if (tirette.position.x >= 8.625 && tirette.position.x < 8.825) {
-            tirette.position.x = 8.75
+        } else if (tirette.position.x >= (8.795 + 8.54) / 2 && tirette.position.x < 8.8) {
+            tirette.position.x = 8.795
             val_Tirettes[last_Tirette] = 9
         }
         last_Tirette = -1

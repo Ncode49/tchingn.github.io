@@ -373,34 +373,34 @@ function discretisationTirette() {
         if (tirette.position.x < 6.20) {
             tirette.position.x = 6.1
             val_Tirettes[last_Tirette] = 0
-        } else if (tirette.position.x > 6.20 && tirette.position.x < 6.625) { // 6,488-6,20=0,288
+        } else if (tirette.position.x > 6.20 && tirette.position.x < 6.625) {
             tirette.position.x = 6.5
             val_Tirettes[last_Tirette] = 0
-        } else if (tirette.position.x >= 6.625 && tirette.position.x < 6.825) { // 6,73-6,488 = 0.242
+        } else if (tirette.position.x >= 6.625 && tirette.position.x < 6.825) {
             tirette.position.x = 6.75
             val_Tirettes[last_Tirette] = 1
-        } else if (tirette.position.x >= 6.825 && tirette.position.x < 7.125) { // 7,052-6,73 = 0.322
+        } else if (tirette.position.x >= 6.825 && tirette.position.x < 7.125) {
             tirette.position.x = 7
             val_Tirettes[last_Tirette] = 2
-        } else if (tirette.position.x >= 7.125 && tirette.position.x < 7.375) { // 7,25-7,052 = 0.198
+        } else if (tirette.position.x >= 7.125 && tirette.position.x < 7.375) {
             tirette.position.x = 7.25
             val_Tirettes[last_Tirette] = 3
-        } else if (tirette.position.x >= 7.375 && tirette.position.x < 7.625) { // 7.5-7.25 = 0.25
+        } else if (tirette.position.x >= 7.375 && tirette.position.x < 7.625) {
             tirette.position.x = 7.5
             val_Tirettes[last_Tirette] = 4
-        } else if (tirette.position.x >= 7.625 && tirette.position.x < 7.825) { // 7.75-7.5 = 0.25
+        } else if (tirette.position.x >= 7.625 && tirette.position.x < 7.825) {
             tirette.position.x = 7.75
             val_Tirettes[last_Tirette] = 5
-        } else if (tirette.position.x >= 7.825 && tirette.position.x < 8.125) { // 8-7.75 = 0.25
+        } else if (tirette.position.x >= 7.825 && tirette.position.x < 8.125) {
             tirette.position.x = 8
             val_Tirettes[last_Tirette] = 6
-        } else if (tirette.position.x >= 8.125 && tirette.position.x < 8.375) { // 8.32-8 = 0.32
+        } else if (tirette.position.x >= 8.125 && tirette.position.x < 8.375) {
             tirette.position.x = 8.25
             val_Tirettes[last_Tirette] = 7
-        } else if (tirette.position.x >= 8.375 && tirette.position.x < 8.625) { //8.6-8.32 = 0.28
+        } else if (tirette.position.x >= 8.375 && tirette.position.x < 8.625) {
             tirette.position.x = 8.50
             val_Tirettes[last_Tirette] = 8
-        } else if (tirette.position.x >= 8.625 && tirette.position.x < 8.825) { // 8.8-8.6 = 0.2
+        } else if (tirette.position.x >= 8.625 && tirette.position.x < 8.825) {
             tirette.position.x = 8.75
             val_Tirettes[last_Tirette] = 9
         }
